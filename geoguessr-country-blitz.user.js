@@ -6,7 +6,7 @@
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        none
-// @copyright    2022, miraclewhips (https://openuserjs.org/users/miraclewhips)
+// @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // @updateURL    https://github.com/miraclewhips/geoguessr-country-blitz/raw/master/geoguessr-country-blitz.user.js
 // ==/UserScript==
