@@ -8,7 +8,7 @@
 // @grant        none
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
-// @updateURL    https://github.com/miraclewhips/geoguessr-country-blitz/raw/master/geoguessr-country-blitz.user.js
+// @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-blitz.user.js
 // ==/UserScript==
 
 /* You can sign up for free at bigdatacloud.com to get an API key */
