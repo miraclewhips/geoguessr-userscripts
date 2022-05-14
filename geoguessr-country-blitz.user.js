@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Blitz
 // @description  Get as many countries correct as you can within the time limit
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -666,8 +666,4 @@ const init = () => {
 	tick();
 }
 
-document.onreadystatechange = () => {
-	if (document.readyState === 'complete') {
-		init();
-	}
-}
+init();

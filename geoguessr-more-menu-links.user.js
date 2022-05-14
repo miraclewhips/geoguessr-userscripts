@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr More Menu Links
 // @description  Adds extra links (Pro Leagues, Liked Maps, My Maps) to the navigation bar
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -61,8 +61,4 @@ const init = () => {
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
 }
 
-document.onreadystatechange = () => {
-	if (document.readyState === 'complete') {
-		init();
-	}
-}
+init();

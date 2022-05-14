@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Exact Round Time
 // @description  Allows you to change the round time limit in increments smaller than 10s
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -31,7 +31,7 @@ const init = () => {
 		const mapSelectLayout = document.querySelector('div[class^="play_section__"]');
 
 		if(mapSelectLayout && !document.getElementById('has-timer-buttons')) {
-			let label = mapSelectLayout.querySelectorAll('div[class^="game-options_options__"] label[class^="game-options_option__eCz9o"] div[class^="game-options_optionLabel__dJ_Cy"]')[0];
+			let label = mapSelectLayout.querySelectorAll('div[class^="game-options_options__"] label[class^="game-options_option__"] div[class^="game-options_optionLabel__"]')[0];
 
 			if(label) {
 				label.id = "has-timer-buttons";
@@ -66,8 +66,4 @@ const init = () => {
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
 }
 
-document.onreadystatechange = () => {
-	if (document.readyState === 'complete') {
-		init();
-	}
-}
+init();
