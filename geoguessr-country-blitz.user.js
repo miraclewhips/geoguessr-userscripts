@@ -8,6 +8,7 @@
 // @grant        none
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
+// @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-blitz.user.js
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-blitz.user.js
 // ==/UserScript==
 
