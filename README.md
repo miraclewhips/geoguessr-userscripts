@@ -23,3 +23,9 @@ Allows you to change the round time limit in 1 second increments instead of 10 s
 ### **[GeoGuessr More Menu Links](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-more-menu-links.user.js)**
 
 Adds extra links (Pro Leagues, Liked Maps, My Maps) to the navigation bar.
+
+---
+
+### **[GeoGuessr Custom Avatar Uploader](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-avatar-uploader.user.js)**
+
+Allows you to upload custom avatar images (upload at the bottom of your profile page).
