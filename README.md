@@ -14,18 +14,24 @@ Sign up at  [Big Data Cloud](https://www.bigdatacloud.com/)  to get a free API k
 
 ---
 
+### **[GeoGuessr Custom Avatar Uploader](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-avatar-uploader.user.js)**
+
+Allows you to upload custom avatar images (upload at the bottom of your profile page).
+
+---
+
 ### **[GeoGuessr Exact Round Time](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-exact-round-time.user.js)**
 
 Allows you to change the round time limit in 1 second increments instead of 10 seconds.
 
 ---
 
-### **[GeoGuessr More Menu Links](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-more-menu-links.user.js)**
+### **[GeoGuessr Hide Party Link](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-hide-party-link.user.js)**
 
-Adds extra links (Pro Leagues, Liked Maps, My Maps) to the navigation bar.
+Blurs out the party invite link so people can't randomly join by typing the address (made for streamers)
 
 ---
 
-### **[GeoGuessr Custom Avatar Uploader](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-avatar-uploader.user.js)**
+### **[GeoGuessr More Menu Links](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-more-menu-links.user.js)**
 
-Allows you to upload custom avatar images (upload at the bottom of your profile page).
+Adds extra links (Pro Leagues, Liked Maps, My Maps) to the navigation bar.
