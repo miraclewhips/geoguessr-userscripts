@@ -458,7 +458,7 @@ const stopRound = () => {
 					let guessCC = responseGuess.address.country_code.toUpperCase();
 					let locationCC = responseLocation.address.country_code.toUpperCase();
 
-					if (guessCC == locationCC) {
+					if ((CountryDict[guessCC] || guessCC) == (CountryDict[locationCC] || locationCC)) {
 						updateStreak(DATA.streak + 1);
 					} else {
 						updateStreak(0);
