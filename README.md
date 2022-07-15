@@ -10,6 +10,12 @@ Get as many countries correct as you can within the time limit.
 
 ---
 
+### **[GeoGuessr Country Streak](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-streak.user.js)**
+
+Adds a country streak counter that automatically updates while you play.
+
+---
+
 ### **[GeoGuessr Custom Avatar Uploader](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-avatar-uploader.user.js)**
 
 Allows you to upload custom avatar images (upload at the bottom of your profile page).
@@ -24,7 +30,7 @@ Allows you to change the round time limit in 1 second increments instead of 10 s
 
 ### **[GeoGuessr Hide Party Link](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-hide-party-link.user.js)**
 
-Blurs out the party invite link so people can't randomly join by typing the address (made for streamers)
+Blurs out the party invite link so people can't randomly join by typing the address (made for streamers).
 
 ---
 
