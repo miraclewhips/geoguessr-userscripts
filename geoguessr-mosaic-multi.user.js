@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         GeoGuessr Mosaic Multi
-// @description  Divide the round up into tiles and reveal them one-by-one and score bonus points for using fewer tiles (made for NMPZ).
+// @description  Divide the round up into tiles and reveal them one-by-one and score bonus points for using fewer tiles (made for NMPZ)
 // @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
