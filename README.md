@@ -35,3 +35,9 @@ Blurs out the party invite link so people can't randomly join by typing the addr
 ### **[GeoGuessr More Menu Links](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-more-menu-links.user.js)**
 
 Adds extra links (Pro Leagues, Liked Maps, My Maps) to the navigation bar.
+
+---
+
+### **[GeoGuessr Mosaic Multi](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-mosaic-multi.user.js)**
+
+Divide the round up into tiles and reveal them one-by-one and score bonus points for using fewer tiles (made for NMPZ).
