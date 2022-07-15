@@ -12,6 +12,10 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-mosaic-multi.user.js
 // ==/UserScript==
 
+/* ############################################################################### */
+/* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
+/* ############################################################################### */
+
 let DATA = {};
 
 const load = () => {

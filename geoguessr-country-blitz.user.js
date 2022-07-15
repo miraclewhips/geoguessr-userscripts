@@ -12,6 +12,10 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-blitz.user.js
 // ==/UserScript==
 
+/* ############################################################################### */
+/* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
+/* ############################################################################### */
+
 const TICK_INTERVAL = 250;
 
 let CONFIG = {};

@@ -12,7 +12,9 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-avatar-uploader.user.js
 // ==/UserScript==
 
-console.log("TEST AVATAR UPLOADER")
+/* ############################################################################### */
+/* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
+/* ############################################################################### */
 
 const getBase64 = (file) => {
 	return new Promise((resolve, reject) => {

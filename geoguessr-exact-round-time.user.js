@@ -12,6 +12,10 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-exact-round-time.user.js
 // ==/UserScript==
 
+/* ############################################################################### */
+/* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
+/* ############################################################################### */
+
 const createButton = (text) => {
 	let button = document.createElement('a');
 	button.setAttribute('style', 'background:#7950e5; color:white; border:none; outline:none; font:inherit; cursor:pointer; font-weight:bold; padding:5px 0; width:26px; text-decoration:none;');

@@ -12,6 +12,10 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-hide-party-link.user.js
 // ==/UserScript==
 
+/* ############################################################################### */
+/* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
+/* ############################################################################### */
+
 let style = document.createElement('style');
 style.innerHTML = `
 	span[class^="copy-link_root__"] input {
