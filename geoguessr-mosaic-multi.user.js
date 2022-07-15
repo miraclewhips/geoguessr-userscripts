@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Mosaic Multi
 // @description  Divide the round up into tiles and reveal them one-by-one and score bonus points for using fewer tiles (made for NMPZ).
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -50,6 +50,7 @@ const getCurrentRound = () => {
 const startRound = () => {
 	DATA.round = getCurrentRound();
 	DATA.round_started = true;
+	DATA.game_finished = false;
 
 	if(DATA.round === 1 && DATA.game_id !== getGameId()) {
 		DATA.scores = [];
@@ -170,7 +171,7 @@ const startRound = () => {
 };
 
 const curve = (x, size) => {
-	return Math.pow(1 - 12.5 / size, x);
+	return Math.pow(Math.max(1 - 12.5 / size, 0.15), x);
 }
 
 const formatMultiplier = (multi) => {
