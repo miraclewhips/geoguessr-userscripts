@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Blitz
 // @description  Get as many countries correct as you can within the time limit
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -11,18 +11,6 @@
 // @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-blitz.user.js
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-blitz.user.js
 // ==/UserScript==
-
-/* You can sign up for free at bigdatacloud.com to get an API key */
-
-const API_KEY = 'ENTER_API_KEY_HERE';
-
-
-
-
-
-/* ############################################################################### */
-/* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
-/* ############################################################################### */
 
 const TICK_INTERVAL = 250;
 
@@ -345,13 +333,10 @@ const abandonGame = () => {
 }
 
 const setCurrentSettingsLayout = () => {
-	document.getElementById('blitz-game-no-api-key').style.display = 'none';
 	document.getElementById('blitz-game-current').style.display = 'none';
 	document.getElementById('blitz-game-new').style.display = 'none';
 
-	if(!apiKeyValid()) {
-		document.getElementById('blitz-game-no-api-key').style.display = 'block';
-	}else if(CONFIG.active) {
+	if(CONFIG.active) {
 		document.getElementById('blitz-game-current').style.display = 'block';
 	}else{
 		document.getElementById('blitz-game-new').style.display = 'block';
@@ -413,12 +398,6 @@ const updateBlitzMapSettingsPanel = () => {
 					<h3><strong>${CONFIG.correct} / ${CONFIG.guessed} correct - Time remaining: <span id="blitz-map-time-remaining"></span></strong></h3>
 
 					<div style="display:flex; justify-content:center; margin-top: 1em;" id="blitz-abandon"></div>
-				</div>
-
-				<div id="blitz-game-no-api-key">
-					You need to add an API key to the Country Blitz userscript before you can play, so it can detect whether or not you chose the correct country. You can get a free API key by signing up at <a href="https://www.bigdatacloud.com/" target="_blank" rel="noopener noreferrer" style="color:rgb(254, 205, 25);"><strong>Big Data Cloud</strong></a>.
-					<br><br>
-					Once you have an API key, replace <strong style="color:rgb(254, 205, 25);"><em>ENTER_API_KEY_HERE</em></strong> at the top of the userscript with your API key and reload the page.
 				</div>
 			`;
 
@@ -550,24 +529,16 @@ const closeResultsScreen = () => {
 	save();
 }
 
-const apiKeyValid = () => {
-	if (API_KEY.length <= 24 || API_KEY.match("^[a-f0-9]*$") == null) {
-		return false;
-	}
-
-	return true;
-}
-
 async function getUserAsync(location) {
     if (location[0] <= -85.05) {
         return 'AQ';
     }
 
-    let api = "https://api.bigdatacloud.net/data/reverse-geocode?latitude="+location[0]+"&longitude="+location[1]+"&localityLanguage=en&key="+API_KEY;
+		let api = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=3&format=jsonv2`;
 	
     let response = await fetch(api)
         .then(res => res.json())
-        .then(out => CountryDict[out.countryCode]);
+        .then(out => CountryDict[out.address.country_code.toUpperCase()]);
 
     return response;
 }
