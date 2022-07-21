@@ -43,3 +43,9 @@ Adds extra links (Pro Leagues, Liked Maps, My Maps) to the navigation bar.
 ### **[GeoGuessr Mosaic Multi](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-mosaic-multi.user.js)**
 
 Divide the round up into tiles and reveal them one-by-one and score bonus points for using fewer tiles (made for NMPZ).
+
+---
+
+### **[GeoGuessr State Streak](https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-state-streak.user.js)**
+
+Adds a state/province/region streak counter that automatically updates while you play (may not work for all countries, depending on how they define their regions)

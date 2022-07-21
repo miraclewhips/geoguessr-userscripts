@@ -1,15 +1,15 @@
 // ==UserScript==
-// @name         GeoGuessr Country Streak
-// @description  Adds a country streak counter that automatically updates while you play
-// @version      1.1
+// @name         GeoGuessr State Streak
+// @description  Adds a state/province/region streak counter that automatically updates while you play (may not work for all countries, depending on how they define their regions)
+// @version      1.0
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        none
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
-// @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-streak.user.js
-// @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-streak.user.js
+// @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-state-streak.user.js
+// @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-state-streak.user.js
 // ==/UserScript==
 
 let ENABLED_ON_CHALLENGES = true; //Replace with true or false
@@ -37,7 +37,7 @@ const load = () => {
 		last_guess: [0, 0]
 	}
 
-	let data = JSON.parse(window.localStorage.getItem('geoCountryStreak'));
+	let data = JSON.parse(window.localStorage.getItem('geoStateStreak'));
 
 	if(data) {
 		data.round = 0;
@@ -51,264 +51,13 @@ const load = () => {
 }
 
 const save = () => {
-	window.localStorage.setItem('geoCountryStreak', JSON.stringify(DATA));
+	window.localStorage.setItem('geoStateStreak', JSON.stringify(DATA));
 }
 
 const getCurrentRound = () => {
 	const roundNode = document.querySelector('div[class^="status_inner__"]>div[data-qa="round-number"]');
 	return parseInt(roundNode.children[1].textContent.split(/\//gi)[0].trim(), 10);
 }
-
-var CountryDict = {
-	AF: 'AF',
-	AX: 'FI', // Aland Islands
-	AL: 'AL',
-	DZ: 'DZ',
-	AS: 'US', // American Samoa
-	AD: 'AD',
-	AO: 'AO',
-	AI: 'GB', // Anguilla
-	AQ: 'AQ', // Antarctica
-	AG: 'AG',
-	AR: 'AR',
-	AM: 'AM',
-	AW: 'NL', // Aruba
-	AU: 'AU',
-	AT: 'AT',
-	AZ: 'AZ',
-	BS: 'BS',
-	BH: 'BH',
-	BD: 'BD',
-	BB: 'BB',
-	BY: 'BY',
-	BE: 'BE',
-	BZ: 'BZ',
-	BJ: 'BJ',
-	BM: 'GB', // Bermuda
-	BT: 'BT',
-	BO: 'BO',
-	BQ: 'NL', // Bonaire, Sint Eustatius, Saba
-	BA: 'BA',
-	BW: 'BW',
-	BV: 'NO', // Bouvet Island
-	BR: 'BR',
-	IO: 'GB', // British Indian Ocean Territory
-	BN: 'BN',
-	BG: 'BG',
-	BF: 'BF',
-	BI: 'BI',
-	KH: 'KH',
-	CM: 'CM',
-	CA: 'CA',
-	CV: 'CV',
-	KY: 'UK', // Cayman Islands
-	CF: 'CF',
-	TD: 'TD',
-	CL: 'CL',
-	CN: 'CN',
-	CX: 'AU', // Christmas Islands
-	CC: 'AU', // Cocos (Keeling) Islands
-	CO: 'CO',
-	KM: 'KM',
-	CG: 'CG',
-	CD: 'CD',
-	CK: 'NZ', // Cook Islands
-	CR: 'CR',
-	CI: 'CI',
-	HR: 'HR',
-	CU: 'CU',
-	CW: 'NL', // Curacao
-	CY: 'CY',
-	CZ: 'CZ',
-	DK: 'DK',
-	DJ: 'DJ',
-	DM: 'DM',
-	DO: 'DO',
-	EC: 'EC',
-	EG: 'EG',
-	SV: 'SV',
-	GQ: 'GQ',
-	ER: 'ER',
-	EE: 'EE',
-	ET: 'ET',
-	FK: 'GB', // Falkland Islands
-	FO: 'DK', // Faroe Islands
-	FJ: 'FJ',
-	FI: 'FI',
-	FR: 'FR',
-	GF: 'FR', // French Guiana
-	PF: 'FR', // French Polynesia
-	TF: 'FR', // French Southern Territories
-	GA: 'GA',
-	GM: 'GM',
-	GE: 'GE',
-	DE: 'DE',
-	GH: 'GH',
-	GI: 'UK', // Gibraltar
-	GR: 'GR',
-	GL: 'DK', // Greenland
-	GD: 'GD',
-	GP: 'FR', // Guadeloupe
-	GU: 'US', // Guam
-	GT: 'GT',
-	GG: 'GB', // Guernsey
-	GN: 'GN',
-	GW: 'GW',
-	GY: 'GY',
-	HT: 'HT',
-	HM: 'AU', // Heard Island and McDonald Islands
-	VA: 'VA',
-	HN: 'HN',
-	HK: 'CN', // Hong Kong
-	HU: 'HU',
-	IS: 'IS',
-	IN: 'IN',
-	ID: 'ID',
-	IR: 'IR',
-	IQ: 'IQ',
-	IE: 'IE',
-	IM: 'GB', // Isle of Man
-	IL: 'IL',
-	IT: 'IT',
-	JM: 'JM',
-	JP: 'JP',
-	JE: 'GB', // Jersey
-	JO: 'JO',
-	KZ: 'KZ',
-	KE: 'KE',
-	KI: 'KI',
-	KR: 'KR',
-	KW: 'KW',
-	KG: 'KG',
-	LA: 'LA',
-	LV: 'LV',
-	LB: 'LB',
-	LS: 'LS',
-	LR: 'LR',
-	LY: 'LY',
-	LI: 'LI',
-	LT: 'LT',
-	LU: 'LU',
-	MO: 'CN', // Macao
-	MK: 'MK',
-	MG: 'MG',
-	MW: 'MW',
-	MY: 'MY',
-	MV: 'MV',
-	ML: 'ML',
-	MT: 'MT',
-	MH: 'MH',
-	MQ: 'FR', // Martinique
-	MR: 'MR',
-	MU: 'MU',
-	YT: 'FR', // Mayotte
-	MX: 'MX',
-	FM: 'FM',
-	MD: 'MD',
-	MC: 'MC',
-	MN: 'MN',
-	ME: 'ME',
-	MS: 'GB', // Montserrat
-	MA: 'MA',
-	MZ: 'MZ',
-	MM: 'MM',
-	NA: 'NA',
-	NR: 'NR',
-	NP: 'NP',
-	NL: 'NL',
-	AN: 'NL', // Netherlands Antilles
-	NC: 'FR', // New Caledonia
-	NZ: 'NZ',
-	NI: 'NI',
-	NE: 'NE',
-	NG: 'NG',
-	NU: 'NZ', // Niue
-	NF: 'AU', // Norfolk Island
-	MP: 'US', // Northern Mariana Islands
-	NO: 'NO',
-	OM: 'OM',
-	PK: 'PK',
-	PW: 'PW',
-	PS: 'IL', // Palestine
-	PA: 'PA',
-	PG: 'PG',
-	PY: 'PY',
-	PE: 'PE',
-	PH: 'PH',
-	PN: 'GB', // Pitcairn
-	PL: 'PL',
-	PT: 'PT',
-	PR: 'US', // Puerto Rico
-	QA: 'QA',
-	RE: 'FR', // Reunion
-	RO: 'RO',
-	RU: 'RU',
-	RW: 'RW',
-	BL: 'FR', // Saint Barthelemy
-	SH: 'GB', // Saint Helena
-	KN: 'KN',
-	LC: 'LC',
-	MF: 'FR', // Saint Martin
-	PM: 'FR', // Saint Pierre and Miquelon
-	VC: 'VC',
-	WS: 'WS',
-	SM: 'SM',
-	ST: 'ST',
-	SA: 'SA',
-	SN: 'SN',
-	RS: 'RS',
-	SC: 'SC',
-	SL: 'SL',
-	SG: 'SG',
-	SX: 'NL', // Sint Maarten
-	SK: 'SK',
-	SI: 'SI',
-	SB: 'SB',
-	SO: 'SO',
-	ZA: 'ZA',
-	GS: 'GB', // South Georgia and the South Sandwich Islands
-	ES: 'ES',
-	LK: 'LK',
-	SD: 'SD',
-	SR: 'SR',
-	SJ: 'NO', // Svalbard and Jan Mayen
-	SZ: 'SZ',
-	SE: 'SE',
-	CH: 'CH',
-	SY: 'SY',
-	TW: 'TW', // Taiwan
-	TJ: 'TJ',
-	TZ: 'TZ',
-	TH: 'TH',
-	TL: 'TL',
-	TG: 'TG',
-	TK: 'NZ', // Tokelau
-	TO: 'TO',
-	TT: 'TT',
-	TN: 'TN',
-	TR: 'TR',
-	TM: 'TM',
-	TC: 'GB', // Turcs and Caicos Islands
-	TV: 'TV',
-	UG: 'UG',
-	UA: 'UA',
-	AE: 'AE',
-	GB: 'GB',
-	US: 'US',
-	UM: 'US', // US Minor Outlying Islands
-	UY: 'UY',
-	UZ: 'UZ',
-	VU: 'VU',
-	VE: 'VE',
-	VN: 'VN',
-	VG: 'GB', // British Virgin Islands
-	VI: 'US', // US Virgin Islands
-	WF: 'FR', // Wallis and Futuna
-	EH: 'MA', // Western Sahara
-	YE: 'YE',
-	ZM: 'ZM',
-	ZW: 'ZW'
-};
 
 const checkGameMode = () => {
 	return (location.pathname.startsWith("/game/") || (ENABLED_ON_CHALLENGES && location.pathname.startsWith("/challenge/")));
@@ -330,7 +79,7 @@ const updateRoundPanel = () => {
 
 			panel.innerHTML = `
 				<div class="${gameScore.getAttribute('class')}">
-					<div class="${classLabel}">STREAK</div>
+					<div class="${classLabel}">STATE STREAK</div>
 					<div id="streak-counter-value" class="${valueLabel}"></div>
 				</div>
 			`;
@@ -352,16 +101,16 @@ const createStreakText = () => {
 	}
 
 	if(DATA.streak > 0) {
-		return `It was <span style="color:#6cb928">${DATA.country_location}!</span> Country Streak: <span style="color:#fecd19">${DATA.streak}</span>`;
+		return `It was <span style="color:#6cb928">${DATA.state_location}!</span> State Streak: <span style="color:#fecd19">${DATA.streak}</span>`;
 	}else{
-		let suffix = `countries in a row.`;
+		let suffix = `states in a row.`;
 
 		switch(DATA.previous_streak) {
 			case 1:
-				suffix = `country.`;
+				suffix = `state.`;
 		}
 
-		return `You guessed <span style="color:#f95252">${DATA.country_guess}</span>, unfortunately it was <span style="color:#6cb928">${DATA.country_location}</span>. Your streak ended after correctly guessing <span style="color:#fecd19">${DATA.previous_streak}</span> ${suffix}`;
+		return `You guessed <span style="color:#f95252">${DATA.state_guess}</span>, unfortunately it was <span style="color:#6cb928">${DATA.state_location}</span>. Your streak ended after correctly guessing <span style="color:#fecd19">${DATA.previous_streak}</span> ${suffix}`;
 	}
 }
 
@@ -457,13 +206,10 @@ const stopRound = () => {
 			queryAPI(guess).then(responseGuess => {
 				queryAPI(location).then(responseLocation => {
 					DATA.checking_api = false;
-					let guessCC = responseGuess.address.country_code.toUpperCase();
-					let locationCC = responseLocation.address.country_code.toUpperCase();
+					DATA.state_guess = responseGuess.address.state;
+					DATA.state_location = responseLocation.address.state;
 
-					DATA.country_guess = responseGuess.address.country;
-					DATA.country_location = responseLocation.address.country;
-
-					if ((CountryDict[guessCC] || guessCC) === (CountryDict[locationCC] || locationCC)) {
+					if (responseGuess.address.state === responseLocation.address.state && responseGuess.address.country_code === responseLocation.address.country_code) {
 						updateStreak(DATA.streak + 1);
 					} else {
 						updateStreak(0);
