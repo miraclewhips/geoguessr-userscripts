@@ -110,7 +110,13 @@ const createStreakText = () => {
 				suffix = `state.`;
 		}
 
-		return `You guessed <span style="color:#f95252">${DATA.state_guess}</span>, unfortunately it was <span style="color:#6cb928">${DATA.state_location}</span>. Your streak ended after correctly guessing <span style="color:#fecd19">${DATA.previous_streak}</span> ${suffix}`;
+		let previousGuessText = `You didn't make a guess.`;
+
+		if(DATA.state_guess) {
+			previousGuessText = `You guessed <span style="color:#f95252">${DATA.state_guess}</span>, unfortunately it was <span style="color:#6cb928">${DATA.state_location}</span>.`;
+		}
+
+		return `${previousGuessText} Your streak ended after correctly guessing <span style="color:#fecd19">${DATA.previous_streak}</span> ${suffix}`;
 	}
 }
 
@@ -192,6 +198,15 @@ const stopRound = () => {
 	.then(res => res.json())
 	.then((out) => {
 			let guess_counter = out.player.guesses.length;
+
+			if(out.player.guesses[guess_counter-1].timedOut && !out.player.guesses[guess_counter-1].timedOutWithGuess) {
+				DATA.checking_api = false;
+				DATA.state_guess = null;
+				DATA.state_location = null;
+				updateStreak(0);
+				return;
+			}
+
 			let guess = [out.player.guesses[guess_counter-1].lat,out.player.guesses[guess_counter-1].lng];
 
 			if (guess[0] == DATA.last_guess[0] && guess[1] == DATA.last_guess[1]) {
