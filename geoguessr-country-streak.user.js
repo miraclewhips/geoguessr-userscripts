@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Streak
 // @description  Adds a country streak counter that automatically updates while you play
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -414,17 +414,23 @@ const startRound = () => {
 	updateRoundPanel();
 }
 
-const queryAPI = async (location) => {
-	if (location[0] <= -85.05) {
-			return 'AQ';
+const queryGeoguessrGameData = async (id) => {
+	let apiUrl = `https://www.geoguessr.com/api/v3/games/${id}`;
+
+	if(location.pathname.startsWith("/challenge/")) {
+		apiUrl = `https://www.geoguessr.com/api/v3/challenges/${id}/game`;
 	}
 
+	return await fetch(apiUrl).then(res => res.json());
+}
+
+const queryAPI = async (location) => {
 	let apiUrl = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=5&format=jsonv2`;
 
 	return await fetch(apiUrl).then(res => res.json());
-};
+}
 
-const stopRound = () => {
+const stopRound = async () => {
 	DATA.round_started = false;
 
 	if(!checkGameMode()) return;
@@ -434,58 +440,48 @@ const stopRound = () => {
 		return;
 	}
 
-	const id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-
-	let apiUrl = `https://www.geoguessr.com/api/v3/games/${id}`;
-
-	if(location.pathname.startsWith("/challenge/")) {
-		apiUrl = `https://www.geoguessr.com/api/v3/challenges/${id}/game`;
-	}
-
 	DATA.checking_api = true;
 	updateStreakPanels();
 
-	fetch(apiUrl)
-	.then(res => res.json())
-	.then((out) => {
-			let guess_counter = out.player.guesses.length;
+	const id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+	let out = await queryGeoguessrGameData(id);
 
-			if(out.player.guesses[guess_counter-1].timedOut && !out.player.guesses[guess_counter-1].timedOutWithGuess) {
-				DATA.checking_api = false;
-				DATA.country_guess = null;
-				DATA.country_location = null;
-				updateStreak(0);
-				return;
-			}
+	let guess_counter = out.player.guesses.length;
+	let guess = [out.player.guesses[guess_counter-1].lat,out.player.guesses[guess_counter-1].lng];
 
-			let guess = [out.player.guesses[guess_counter-1].lat,out.player.guesses[guess_counter-1].lng];
+	if (guess[0] == DATA.last_guess[0] && guess[1] == DATA.last_guess[1]) {
+		DATA.checking_api = false;
+		updateStreakPanels();
+		return;
+	}
 
-			if (guess[0] == DATA.last_guess[0] && guess[1] == DATA.last_guess[1]) {
-				DATA.checking_api = false;
-				updateStreakPanels();
-				return;
-			}
+	if(out.player.guesses[guess_counter-1].timedOut && !out.player.guesses[guess_counter-1].timedOutWithGuess) {
+		DATA.checking_api = false;
+		DATA.country_guess = null;
+		DATA.country_location = null;
+		updateStreak(0);
+		return;
+	}
 
-			DATA.last_guess = guess;
-			let location = [out.rounds[guess_counter-1].lat,out.rounds[guess_counter-1].lng];
+	DATA.last_guess = guess;
+	let location = [out.rounds[guess_counter-1].lat,out.rounds[guess_counter-1].lng];
 
-			queryAPI(guess).then(responseGuess => {
-				queryAPI(location).then(responseLocation => {
-					DATA.checking_api = false;
-					let guessCC = responseGuess.address.country_code.toUpperCase();
-					let locationCC = responseLocation.address.country_code.toUpperCase();
+	let responseGuess = await queryAPI(guess);
+	let responseLocation = await queryAPI(location);
 
-					DATA.country_guess = responseGuess.address.country;
-					DATA.country_location = responseLocation.address.country;
+	DATA.checking_api = false;
 
-					if ((CountryDict[guessCC] || guessCC) === (CountryDict[locationCC] || locationCC)) {
-						updateStreak(DATA.streak + 1);
-					} else {
-						updateStreak(0);
-					}
-					});
-			});
-	}).catch(err => { throw err });
+	let guessCC = responseGuess?.address?.country_code?.toUpperCase() || null;
+	let locationCC = responseLocation?.address?.country_code?.toUpperCase() || null;
+
+	DATA.country_guess = responseGuess?.address?.country || 'Undefined';
+	DATA.country_location = responseLocation?.address?.country || 'Undefined';
+
+	if (guessCC && locationCC && (CountryDict[guessCC] || guessCC) === (CountryDict[locationCC] || locationCC)) {
+		updateStreak(DATA.streak + 1);
+	} else {
+		updateStreak(0);
+	}
 }
 
 const updateStreak = (streak) => {

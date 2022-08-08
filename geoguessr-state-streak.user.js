@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr State Streak
 // @description  Adds a state/province/region streak counter that automatically updates while you play (may not work for all countries, depending on how they define their regions)
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -163,6 +163,16 @@ const startRound = () => {
 	updateRoundPanel();
 }
 
+const queryGeoguessrGameData = async (id) => {
+	let apiUrl = `https://www.geoguessr.com/api/v3/games/${id}`;
+
+	if(location.pathname.startsWith("/challenge/")) {
+		apiUrl = `https://www.geoguessr.com/api/v3/challenges/${id}/game`;
+	}
+
+	return await fetch(apiUrl).then(res => res.json());
+}
+
 const queryAPI = async (location) => {
 	if (location[0] <= -85.05) {
 			return 'AQ';
@@ -173,7 +183,7 @@ const queryAPI = async (location) => {
 	return await fetch(apiUrl).then(res => res.json());
 };
 
-const stopRound = () => {
+const stopRound = async () => {
 	DATA.round_started = false;
 
 	if(!checkGameMode()) return;
@@ -183,55 +193,45 @@ const stopRound = () => {
 		return;
 	}
 
-	const id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-
-	let apiUrl = `https://www.geoguessr.com/api/v3/games/${id}`;
-
-	if(location.pathname.startsWith("/challenge/")) {
-		apiUrl = `https://www.geoguessr.com/api/v3/challenges/${id}/game`;
-	}
-
 	DATA.checking_api = true;
 	updateStreakPanels();
 
-	fetch(apiUrl)
-	.then(res => res.json())
-	.then((out) => {
-			let guess_counter = out.player.guesses.length;
+	const id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+	let out = await queryGeoguessrGameData(id);
 
-			if(out.player.guesses[guess_counter-1].timedOut && !out.player.guesses[guess_counter-1].timedOutWithGuess) {
-				DATA.checking_api = false;
-				DATA.state_guess = null;
-				DATA.state_location = null;
-				updateStreak(0);
-				return;
-			}
+	let guess_counter = out.player.guesses.length;
+	let guess = [out.player.guesses[guess_counter-1].lat,out.player.guesses[guess_counter-1].lng];
 
-			let guess = [out.player.guesses[guess_counter-1].lat,out.player.guesses[guess_counter-1].lng];
+	if (guess[0] == DATA.last_guess[0] && guess[1] == DATA.last_guess[1]) {
+		DATA.checking_api = false;
+		updateStreakPanels();
+		return;
+	}
 
-			if (guess[0] == DATA.last_guess[0] && guess[1] == DATA.last_guess[1]) {
-				DATA.checking_api = false;
-				updateStreakPanels();
-				return;
-			}
+	if(out.player.guesses[guess_counter-1].timedOut && !out.player.guesses[guess_counter-1].timedOutWithGuess) {
+		DATA.checking_api = false;
+		DATA.state_guess = null;
+		DATA.state_location = null;
+		updateStreak(0);
+		return;
+	}
 
-			DATA.last_guess = guess;
-			let location = [out.rounds[guess_counter-1].lat,out.rounds[guess_counter-1].lng];
+	DATA.last_guess = guess;
+	let location = [out.rounds[guess_counter-1].lat,out.rounds[guess_counter-1].lng];
 
-			queryAPI(guess).then(responseGuess => {
-				queryAPI(location).then(responseLocation => {
-					DATA.checking_api = false;
-					DATA.state_guess = responseGuess.address.state;
-					DATA.state_location = responseLocation.address.state;
+	let responseGuess = await queryAPI(guess);
+	let responseLocation = await queryAPI(location);
 
-					if (responseGuess.address.state === responseLocation.address.state && responseGuess.address.country_code === responseLocation.address.country_code) {
-						updateStreak(DATA.streak + 1);
-					} else {
-						updateStreak(0);
-					}
-					});
-			});
-	}).catch(err => { throw err });
+	DATA.checking_api = false;
+	
+	DATA.state_guess = responseGuess?.address?.state || responseGuess?.address?.territory || 'Undefined';
+	DATA.state_location = responseLocation?.address?.state || responseLocation?.address?.territory || 'Undefined';
+
+	if (DATA.state_guess !== 'Undefined' && DATA.state_location !== 'Undefined' && DATA.state_guess === DATA.state_location && responseGuess?.address?.country_code === responseLocation?.address?.country_code) {
+		updateStreak(DATA.streak + 1);
+	} else {
+		updateStreak(0);
+	}
 }
 
 const updateStreak = (streak) => {
