@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Blitz
 // @description  Get as many countries correct as you can within the time limit
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -11,6 +11,12 @@
 // @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-blitz.user.js
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-country-blitz.user.js
 // ==/UserScript==
+
+// Put an ISO 639-1 language code (e.g. "en") in between the quotes to return the country name in a specific language. Automatically detects your language by default, if left blank.
+// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+const LANGUAGE = "";
+
+
 
 /* ############################################################################### */
 /* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
@@ -538,7 +544,7 @@ async function getUserAsync(location) {
         return 'AQ';
     }
 
-		let api = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=3&format=jsonv2`;
+		let api = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=3&format=jsonv2&accept-language=${LANGUAGE}`;
 	
     let response = await fetch(api)
         .then(res => res.json())
