@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr State Streak
 // @description  Adds a state/province/region streak counter that automatically updates while you play (may not work for all countries, depending on how they define their regions)
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -182,7 +182,7 @@ const queryAPI = async (location) => {
 			return 'AQ';
 	}
 
-	let apiUrl = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=5&format=jsonv2&accept-language=${LANGUAGE}`;
+	let apiUrl = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=21&format=jsonv2&accept-language=${LANGUAGE}`;
 
 	return await fetch(apiUrl).then(res => res.json());
 };
@@ -201,10 +201,10 @@ const stopRound = async () => {
 	updateStreakPanels();
 
 	const id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-	let out = await queryGeoguessrGameData(id);
+	let responseGeoGuessr = await queryGeoguessrGameData(id);
 
-	let guess_counter = out.player.guesses.length;
-	let guess = [out.player.guesses[guess_counter-1].lat,out.player.guesses[guess_counter-1].lng];
+	let guess_counter = responseGeoGuessr.player.guesses.length;
+	let guess = [responseGeoGuessr.player.guesses[guess_counter-1].lat,responseGeoGuessr.player.guesses[guess_counter-1].lng];
 
 	if (guess[0] == DATA.last_guess[0] && guess[1] == DATA.last_guess[1]) {
 		DATA.checking_api = false;
@@ -212,7 +212,7 @@ const stopRound = async () => {
 		return;
 	}
 
-	if(out.player.guesses[guess_counter-1].timedOut && !out.player.guesses[guess_counter-1].timedOutWithGuess) {
+	if(responseGeoGuessr.player.guesses[guess_counter-1].timedOut && !responseGeoGuessr.player.guesses[guess_counter-1].timedOutWithGuess) {
 		DATA.checking_api = false;
 		DATA.state_guess = null;
 		DATA.state_location = null;
@@ -221,17 +221,20 @@ const stopRound = async () => {
 	}
 
 	DATA.last_guess = guess;
-	let location = [out.rounds[guess_counter-1].lat,out.rounds[guess_counter-1].lng];
+	let location = [responseGeoGuessr.rounds[guess_counter-1].lat,responseGeoGuessr.rounds[guess_counter-1].lng];
 
 	let responseGuess = await queryAPI(guess);
 	let responseLocation = await queryAPI(location);
 
 	DATA.checking_api = false;
+
+	let guessCC = responseGuess?.address?.country_code?.toUpperCase() || null;
+	let locationCC = responseLocation?.address?.country_code?.toUpperCase() || null;
 	
 	DATA.state_guess = responseGuess?.address?.state || responseGuess?.address?.territory || 'Undefined';
 	DATA.state_location = responseLocation?.address?.state || responseLocation?.address?.territory || 'Undefined';
 
-	if (DATA.state_guess !== 'Undefined' && DATA.state_location !== 'Undefined' && DATA.state_guess === DATA.state_location && responseGuess?.address?.country_code === responseLocation?.address?.country_code) {
+	if (guessCC && locationCC && guessCC === locationCC && DATA.state_guess === DATA.state_location) {
 		updateStreak(DATA.streak + 1);
 	} else {
 		updateStreak(0);

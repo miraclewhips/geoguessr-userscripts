@@ -429,7 +429,7 @@ const queryGeoguessrGameData = async (id) => {
 }
 
 const queryAPI = async (location) => {
-	let apiUrl = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=5&format=jsonv2&accept-language=${LANGUAGE}`;
+	let apiUrl = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=21&format=jsonv2&accept-language=${LANGUAGE}`;
 
 	return await fetch(apiUrl).then(res => res.json());
 }
