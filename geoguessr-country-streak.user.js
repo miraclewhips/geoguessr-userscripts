@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Streak
 // @description  Adds a country streak counter that automatically updates while you play
-// @version      1.4
+// @version      1.5
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -523,24 +523,32 @@ document.addEventListener('keypress', (e) => {
 	};
 });
 
+const checkState = () => {
+	const gameLayout = document.querySelector('.game-layout');
+	const resultLayout = document.querySelector('div[class^="result-layout_root"]');
+	const finalScoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="standard-final-result_score__"]');
+
+	if(gameLayout) {
+		if (DATA.round !== getCurrentRound()) {
+			startRound();
+		}else if(resultLayout && DATA.round_started) {
+			stopRound();
+		}else if(finalScoreLayout && !DATA.game_finished) {
+			DATA.game_finished = true;
+			updateStreakPanels();
+		}
+	}
+}
+
 const init = () => {
 	load();
 
 	const observer = new MutationObserver(() => {
-		const gameLayout = document.querySelector('.game-layout');
-		const resultLayout = document.querySelector('div[class^="result-layout_root"]');
-		const finalScoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="standard-final-result_score__"]');
+		checkState();
 
-		if(gameLayout) {
-			if (DATA.round !== getCurrentRound()) {
-				startRound();
-			}else if(resultLayout && DATA.round_started) {
-				stopRound();
-			}else if(finalScoreLayout && !DATA.game_finished) {
-				DATA.game_finished = true;
-				updateStreakPanels();
-			}
-		}
+		setTimeout(checkState, 100);
+		setTimeout(checkState, 500);
+		setTimeout(checkState, 2000);
 	});
 
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
