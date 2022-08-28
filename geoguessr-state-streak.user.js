@@ -300,7 +300,9 @@ const init = () => {
 		checkState();
 
 		setTimeout(checkState, 100);
+		setTimeout(checkState, 250);
 		setTimeout(checkState, 500);
+		setTimeout(checkState, 1000);
 		setTimeout(checkState, 2000);
 	});
 
