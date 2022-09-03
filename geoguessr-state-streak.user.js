@@ -299,11 +299,15 @@ const init = () => {
 	const observer = new MutationObserver(() => {
 		checkState();
 
+		setTimeout(checkState, 50);
 		setTimeout(checkState, 100);
 		setTimeout(checkState, 250);
 		setTimeout(checkState, 500);
+		setTimeout(checkState, 750);
 		setTimeout(checkState, 1000);
+		setTimeout(checkState, 1500);
 		setTimeout(checkState, 2000);
+		setTimeout(checkState, 3000);
 	});
 
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
