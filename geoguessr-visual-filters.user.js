@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Visual Filters
 // @description  Applies visual filters to the streetview map
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -23,6 +23,7 @@ let VALS = JSON.parse(window.localStorage.getItem('geoVisualFilters')) || {};
 let FILTER_LIST = {
 	hue: { name: 'Hue', default: 0, min: 0, max: 360 },
 	saturate: { name: 'Saturation', default: 100, min: 0, max: 1000 },
+	brightness: { name: 'Brightness', default: 100, min: 10, max: 300 },
 	contrast: { name: 'Contrast', default: 100, min: 10, max: 1000 },
 	invert: { name: 'Invert', default: 0, min: 0, max: 100 },
 	sepia: { name: 'Sepia', default: 0, min: 0, max: 100 },
@@ -47,6 +48,10 @@ const filters = () => {
 
 	if(exists('saturate')) {
 		output.push(`saturate(${val('saturate')}%)`);
+	}
+
+	if(exists('brightness')) {
+		output.push(`brightness(${val('brightness')}%)`);
 	}
 
 	if(exists('contrast')) {
@@ -182,7 +187,7 @@ const init = () => {
 			z-index: 100;
 			color: #ccc;
 			font-size: 16px;
-			width: 240px;
+			width: 300px;
 		}
 
 		#GEO_VF_CONFIG.is-hidden {
@@ -212,7 +217,7 @@ const init = () => {
 		}
 
 		.vf_range label {
-			flex: 0 0 80px;
+			flex: 0 0 90px;
 		}
 
 		.vf_range input {
