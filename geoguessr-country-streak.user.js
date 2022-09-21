@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Streak
 // @description  Adds a country streak counter that automatically updates while you play
-// @version      1.7
+// @version      1.8
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -408,13 +408,17 @@ const updateSummaryPanel = () => {
 	}
 }
 
+const getGameId = () => {
+	return window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+}
+
 const startRound = () => {
 	if(!checkGameMode()) return;
 
 	DATA.round = getCurrentRound();
 	DATA.round_started = true;
 	DATA.game_finished = false;
-	DATA.gameId = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+	DATA.gameId = getGameId();
 
 	updateRoundPanel();
 }
@@ -529,7 +533,7 @@ const checkState = () => {
 	const finalScoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="standard-final-result_score__"]');
 
 	if(gameLayout) {
-		if (DATA.round !== getCurrentRound()) {
+		if (DATA.round !== getCurrentRound() || DATA.gameId !== getGameId()) {
 			if(DATA.round_started) {
 				stopRound();
 			}
