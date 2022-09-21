@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Streak
 // @description  Adds a country streak counter that automatically updates while you play
-// @version      1.6
+// @version      1.7
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -562,6 +562,8 @@ const init = () => {
 	});
 
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+
+	window.addEventListener('mouseup', checkState);
 }
 
 init();
