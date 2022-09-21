@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr State Streak
 // @description  Adds a state/province/region streak counter that automatically updates while you play (may not work for all countries, depending on how they define their regions)
-// @version      1.5
+// @version      1.6
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -163,6 +163,7 @@ const startRound = () => {
 	DATA.round = getCurrentRound();
 	DATA.round_started = true;
 	DATA.game_finished = false;
+	DATA.gameId = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
 
 	updateRoundPanel();
 }
@@ -200,8 +201,7 @@ const stopRound = async () => {
 	DATA.checking_api = true;
 	updateStreakPanels();
 
-	const id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-	let responseGeoGuessr = await queryGeoguessrGameData(id);
+	let responseGeoGuessr = await queryGeoguessrGameData(DATA.gameId);
 
 	let guess_counter = responseGeoGuessr.player.guesses.length;
 	let guess = [responseGeoGuessr.player.guesses[guess_counter-1].lat,responseGeoGuessr.player.guesses[guess_counter-1].lng];
@@ -283,6 +283,10 @@ const checkState = () => {
 
 	if(gameLayout) {
 		if (DATA.round !== getCurrentRound()) {
+			if(DATA.round_started) {
+				stopRound();
+			}
+
 			startRound();
 		}else if(resultLayout && DATA.round_started) {
 			stopRound();

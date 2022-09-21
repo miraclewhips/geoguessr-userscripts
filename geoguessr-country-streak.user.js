@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Streak
 // @description  Adds a country streak counter that automatically updates while you play
-// @version      1.5
+// @version      1.6
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -414,6 +414,7 @@ const startRound = () => {
 	DATA.round = getCurrentRound();
 	DATA.round_started = true;
 	DATA.game_finished = false;
+	DATA.gameId = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
 
 	updateRoundPanel();
 }
@@ -447,11 +448,10 @@ const stopRound = async () => {
 	DATA.checking_api = true;
 	updateStreakPanels();
 
-	const id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-	let out = await queryGeoguessrGameData(id);
+	let responseGeoGuessr = await queryGeoguessrGameData(DATA.gameId);
 
-	let guess_counter = out.player.guesses.length;
-	let guess = [out.player.guesses[guess_counter-1].lat,out.player.guesses[guess_counter-1].lng];
+	let guess_counter = responseGeoGuessr.player.guesses.length;
+	let guess = [responseGeoGuessr.player.guesses[guess_counter-1].lat,responseGeoGuessr.player.guesses[guess_counter-1].lng];
 
 	if (guess[0] == DATA.last_guess[0] && guess[1] == DATA.last_guess[1]) {
 		DATA.checking_api = false;
@@ -459,7 +459,7 @@ const stopRound = async () => {
 		return;
 	}
 
-	if(out.player.guesses[guess_counter-1].timedOut && !out.player.guesses[guess_counter-1].timedOutWithGuess) {
+	if(responseGeoGuessr.player.guesses[guess_counter-1].timedOut && !responseGeoGuessr.player.guesses[guess_counter-1].timedOutWithGuess) {
 		DATA.checking_api = false;
 		DATA.country_guess = null;
 		DATA.country_location = null;
@@ -468,7 +468,7 @@ const stopRound = async () => {
 	}
 
 	DATA.last_guess = guess;
-	let location = [out.rounds[guess_counter-1].lat,out.rounds[guess_counter-1].lng];
+	let location = [responseGeoGuessr.rounds[guess_counter-1].lat,responseGeoGuessr.rounds[guess_counter-1].lng];
 
 	let responseGuess = await queryAPI(guess);
 	let responseLocation = await queryAPI(location);
@@ -530,6 +530,10 @@ const checkState = () => {
 
 	if(gameLayout) {
 		if (DATA.round !== getCurrentRound()) {
+			if(DATA.round_started) {
+				stopRound();
+			}
+
 			startRound();
 		}else if(resultLayout && DATA.round_started) {
 			stopRound();
