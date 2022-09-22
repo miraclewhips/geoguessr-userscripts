@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Visual Filters
 // @description  Applies visual filters to the streetview map
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -21,20 +21,35 @@
 let VALS = JSON.parse(window.localStorage.getItem('geoVisualFilters')) || {};
 
 let FILTER_LIST = {
-	hue: { name: 'Hue', default: 0, min: 0, max: 360 },
-	saturate: { name: 'Saturation', default: 100, min: 0, max: 1000 },
-	brightness: { name: 'Brightness', default: 100, min: 10, max: 300 },
-	contrast: { name: 'Contrast', default: 100, min: 10, max: 1000 },
-	invert: { name: 'Invert', default: 0, min: 0, max: 100 },
-	sepia: { name: 'Sepia', default: 0, min: 0, max: 100 },
-	blur: { name: 'Blur', default: 0, min: 0, max: 100 },
+	hue: { name: 'Hue', default: 0, min: 0, max: 360, unit: 'deg' },
+	saturate: { name: 'Saturation', default: 100, min: 0, max: 1000, unit: '%' },
+	brightness: { name: 'Brightness', default: 100, min: 10, max: 300, unit: '%' },
+	contrast: { name: 'Contrast', default: 100, min: 10, max: 1000, unit: '%' },
+	invert: { name: 'Invert', default: false, type: 'bool' },
+	sepia: { name: 'Sepia', default: 0, min: 0, max: 100, unit: '%' },
+	blur: { name: 'Blur', default: 0, min: 0, max: 100, unit: 'px' },
 	erode: { name: 'Erode', default: 0, min: 0, max: 50 },
 	dilate: { name: 'Dilate', default: 0, min: 0, max: 50 },
 	mosaic: { name: 'Mosaic', default: 0, min: 0, max: 100 }
 }
 
 const exists = (n) => (VALS && typeof VALS[n] !== 'undefined' && VALS[n] !== FILTER_LIST[n].default);
-const clamp = (n) => Math.max(FILTER_LIST[n].min, Math.min(VALS[n], FILTER_LIST[n].max));
+const unit = (n) => FILTER_LIST[n].unit || '';
+
+const clamp = (n) => {
+	let val = VALS[n];
+
+	if(FILTER_LIST[n].min) {
+		val = Math.max(FILTER_LIST[n].min, val);
+	}
+
+	if(FILTER_LIST[n].max) {
+		val = Math.min(FILTER_LIST[n].max, val);
+	}
+
+	return val;
+}
+
 const val = (n) => {
 	return exists(n) ? clamp(n) : FILTER_LIST[n].default;
 }
@@ -59,7 +74,7 @@ const filters = () => {
 	}
 
 	if(exists('invert')) {
-		output.push(`invert(${val('invert')}%)`);
+		output.push(`invert(${val('invert') ? 100 : 0}%)`);
 	}
 
 	if(exists('sepia')) {
@@ -137,30 +152,70 @@ const addConfigButton = () => {
 	});
 }
 
-const createSlider = (n) => {
+const createInput = (n) => {
 	let f = FILTER_LIST[n];
 	let el = document.createElement('div');
-	el.className = 'vf_range';
+	el.className = 'vf_field';
+	el.id = `vf_field_${n}`;
 	el.innerHTML = `<label for="vf_input_${n}">${f.name}</label>`;
 
+	let c = document.createElement('div');
+	c.className = 'vf_input_container';
+
 	let r = document.createElement('input');
-	r.type = 'range';
 	r.id = `vf_input_${n}`;
 	r.name = `vf_input_${n}`;
 	r.dataset.name = n;
-	r.min = f.min;
-	r.max = f.max;
-	r.value = val(n);
-	r.addEventListener('input', sliderChange);
 
-	el.append(r);
+	if(f.min) {
+		r.min = f.min;
+	}
+
+	if(f.max) {
+		r.max = f.max;
+	}
+	
+	r.addEventListener('input', valueChange);
+
+	switch(f.type) {
+		case 'bool':
+			r.type = 'checkbox';
+			r.checked = val(n);
+			break;
+
+		default:
+			r.type = 'range';
+			r.value = val(n);
+			break;
+	}
+
+	c.append(r);
+
+	let v = document.createElement('div');
+	v.className = 'vf_value';
+	v.innerHTML = `<span>${val(n)}</span>${unit(n)}`;
+
+	el.append(c);
+	el.append(v);
 
 	return el;
 }
 
-const sliderChange = (e) => {
+const valueChange = (e) => {
 	let n = e.target.dataset.name;
-	VALS[n] = e.target.value;
+
+	switch(FILTER_LIST[n]['type']) {
+		case 'bool':
+			VALS[n] = e.target.checked;
+			break;
+
+		default:
+			VALS[n] = e.target.value;
+			break;
+	}
+
+	document.querySelector(`#vf_field_${n} .vf_value span`).textContent = VALS[n];
+	
 	window.localStorage.setItem('geoVisualFilters', JSON.stringify(VALS));
 	document.getElementById('GEO_VISUAL_FILTERS').innerHTML = filters();
 }
@@ -171,7 +226,17 @@ const resetFilters = () => {
 	document.getElementById('GEO_VISUAL_FILTERS').innerHTML = filters();
 
 	for(let n in FILTER_LIST) {
-		document.getElementById(`vf_input_${n}`).value = FILTER_LIST[n].default;
+		switch(FILTER_LIST[n]['type']) {
+			case 'bool':
+				document.getElementById(`vf_input_${n}`).checked = FILTER_LIST[n].default;
+				break;
+	
+			default:
+				document.getElementById(`vf_input_${n}`).value = FILTER_LIST[n].default;
+				break;
+		}
+		
+		document.querySelector(`#vf_field_${n} .vf_value span`).textContent = FILTER_LIST[n].default;
 	}
 }
 
@@ -207,22 +272,34 @@ const init = () => {
 			font-size: 14px;
 			font-weight: normal;
 			cursor: pointer;
-			color: #ccc;
+			color: #fff;
 		}
 
-		.vf_range {
+		.vf_field {
 			display: flex;
 			align-items: center;
 			margin-top: 5px;
 		}
 
-		.vf_range label {
+		.vf_field label {
 			flex: 0 0 90px;
 		}
 
-		.vf_range input {
-			padding: 0;
+		.vf_input_container {
 			flex: 1 1 auto;
+		}
+
+		.vf_value {
+			flex: 0 0 70px;
+			text-align: right;
+		}
+
+		.vf_field input {
+			padding: 0;
+		}
+
+		.vf_field input[type=range] {
+			width: 100%;
 		}
 	`;
 	document.body.append(configStyle);
@@ -238,7 +315,7 @@ const init = () => {
 	`;
 
 	for(let n in FILTER_LIST) {
-		configWindow.append(createSlider(n));
+		configWindow.append(createInput(n));
 	}
 
 	document.body.append(configWindow);
