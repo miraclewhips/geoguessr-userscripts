@@ -229,8 +229,6 @@ const stopRound = async () => {
 
 	let responseGuess = await queryAPI(guess);
 	let responseLocation = await queryAPI(location);
-	console.log(responseGuess);
-	console.log(responseLocation);
 
 	DATA.checking_api = false;
 
