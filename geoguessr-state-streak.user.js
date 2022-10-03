@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr State Streak
 // @description  Adds a state/province/region streak counter that automatically updates while you play (may not work for all countries, depending on how they define their regions)
-// @version      1.8
+// @version      1.9
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -15,9 +15,9 @@
 const ENABLED_ON_CHALLENGES = true; //Replace with true or false
 const AUTOMATIC = true; //Replace with false for a manual counter
 
-// Put an ISO 639-1 language code (e.g. "en") in between the quotes to return the country name in a specific language. Automatically detects your language by default, if left blank.
+// Put an ISO 639-1 language code (e.g. "en") in between the quotes to return the country name in a specific language.
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-const LANGUAGE = "";
+const LANGUAGE = "en";
 
 
 
@@ -229,14 +229,16 @@ const stopRound = async () => {
 
 	let responseGuess = await queryAPI(guess);
 	let responseLocation = await queryAPI(location);
+	console.log(responseGuess);
+	console.log(responseLocation);
 
 	DATA.checking_api = false;
 
 	let guessCC = responseGuess?.address?.country_code?.toUpperCase() || null;
 	let locationCC = responseLocation?.address?.country_code?.toUpperCase() || null;
 	
-	DATA.state_guess = responseGuess?.address?.state || responseGuess?.address?.territory || 'Undefined';
-	DATA.state_location = responseLocation?.address?.state || responseLocation?.address?.territory || 'Undefined';
+	DATA.state_guess = responseGuess?.address?.state || responseGuess?.address?.territory || responseGuess?.address?.province || 'Undefined';
+	DATA.state_location = responseLocation?.address?.state || responseLocation?.address?.territory || responseLocation?.address?.province || 'Undefined';
 
 	if (guessCC && locationCC && guessCC === locationCC && DATA.state_guess === DATA.state_location) {
 		updateStreak(DATA.streak + 1);

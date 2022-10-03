@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Streak
 // @description  Adds a country streak counter that automatically updates while you play
-// @version      1.8
+// @version      1.9
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -15,9 +15,9 @@
 const ENABLED_ON_CHALLENGES = true; //Replace with true or false
 const AUTOMATIC = true; //Replace with false for a manual counter
 
-// Put an ISO 639-1 language code (e.g. "en") in between the quotes to return the country name in a specific language. Automatically detects your language by default, if left blank.
+// Put an ISO 639-1 language code (e.g. "en") in between the quotes to return the country name in a specific language.
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-const LANGUAGE = "";
+const LANGUAGE = "en";
 
 
 
