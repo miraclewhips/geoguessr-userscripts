@@ -8,8 +8,8 @@
 // @grant        none
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
-// @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-state-streak.user.js
-// @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-state-streak.user.js
+// @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-county-streak.user.js
+// @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-county-streak.user.js
 // ==/UserScript==
 
 const ENABLED_ON_CHALLENGES = true; //Replace with true or false
@@ -83,7 +83,7 @@ const updateRoundPanel = () => {
 
 			panel.innerHTML = `
 				<div class="${gameScore.getAttribute('class')}">
-					<div class="${classLabel}">STATE STREAK</div>
+					<div class="${classLabel}">COUNTY STREAK</div>
 					<div id="streak-counter-value" class="${valueLabel}"></div>
 				</div>
 			`;
