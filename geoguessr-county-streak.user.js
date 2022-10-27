@@ -107,11 +107,11 @@ const createStreakText = () => {
 	if(DATA.streak > 0) {
 		return `It was <span style="color:#6cb928">${DATA.state_location}!</span> State Streak: <span style="color:#fecd19">${DATA.streak}</span>`;
 	}else{
-		let suffix = `states in a row.`;
+		let suffix = `counties in a row.`;
 
 		switch(DATA.previous_streak) {
 			case 1:
-				suffix = `state.`;
+				suffix = `county.`;
 		}
 
 		let previousGuessText = `You didn't make a guess.`;
