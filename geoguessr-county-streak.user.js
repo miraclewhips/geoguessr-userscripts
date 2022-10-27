@@ -105,7 +105,7 @@ const createStreakText = () => {
 	}
 
 	if(DATA.streak > 0) {
-		return `It was <span style="color:#6cb928">${DATA.state_location}!</span> State Streak: <span style="color:#fecd19">${DATA.streak}</span>`;
+		return `It was <span style="color:#6cb928">${DATA.state_location}!</span> County Streak: <span style="color:#fecd19">${DATA.streak}</span>`;
 	}else{
 		let suffix = `counties in a row.`;
 
