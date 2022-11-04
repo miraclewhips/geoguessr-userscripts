@@ -193,13 +193,65 @@ const queryAPI = async (location) => {
 }
 
 const getIsland = (data) => {
+	const state = data.address['ISO3166-2-lvl4'];
+
 	switch(data.address.country_code) {
+		// NEW ZEALAND
 		case 'nz':
-			if(data.address.state && ['Marlborough', 'Nelson', 'Tasman', 'West Coast', 'Canterbury', 'Otago', 'Southland'].includes(data.address.state)) {
-				return 'South Island';
-			}else{
-				return 'North Island';
+			if(state) {
+				const s = state.replace('NZ-', '');
+				// north island
+				if(['NTL', 'AUK', 'WKO', 'BOP', 'GIS', 'HKB', 'TKI', 'MWT', 'WGN'].includes(s)) {
+					return 'North Island';
+				}
+
+				// south island
+				else if(['TAS', 'NSN', 'MBH', 'WTC', 'CAN', 'OTA', 'STL'].includes(s)) {
+					return 'South Island';
+				}
 			}
+			break;
+
+		// INDONESIA
+		case 'id':
+			if(state) {
+				const s = state.replace('ID-', '');
+				// java
+				if(['BT', 'JK', 'JB', 'JT', 'JI', 'YO'].includes(s)) {
+					return 'Java';
+				}
+
+				// sumatra
+				else if(['AC', 'BE', 'JA', 'BB', 'KR', 'LA', 'RI', 'SB', 'SS', 'SU'].includes(s)) {
+					return 'Sumatra';
+				}
+
+				// kalimantan
+				else if(['KB', 'KS', 'KT', 'KI', 'KU'].includes(s)) {
+					return 'Kalimantan';
+				}
+
+				// sulawesi
+				else if(['GO', 'SR', 'SN', 'ST', 'SG', 'SA'].includes(s)) {
+					return 'Sulawesi';
+				}
+
+				// lesser sunda islands
+				else if(['BA', 'NB', 'NT'].includes(s)) {
+					return 'Lesser Sunda Islands';
+				}
+
+				// maluku islands
+				else if(['MA', 'MU'].includes(s)) {
+					return 'Maluku Islands';
+				}
+
+				// western new guinea
+				else if(['PA', 'PB'].includes(s)) {
+					return 'Western New Guinea';
+				}
+			}
+			break;
 	}
 
 	return 'Undefined';
