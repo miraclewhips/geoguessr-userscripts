@@ -15,10 +15,6 @@
 const ENABLED_ON_CHALLENGES = true; //Replace with true or false
 const AUTOMATIC = true; //Replace with false for a manual counter
 
-// Put an ISO 639-1 language code (e.g. "en") in between the quotes to return the country name in a specific language.
-// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-const LANGUAGE = "en";
-
 
 
 
@@ -187,7 +183,7 @@ const queryAPI = async (location) => {
 			return 'AQ';
 	}
 
-	let apiUrl = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=21&format=jsonv2&accept-language=${LANGUAGE}`;
+	let apiUrl = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=21&format=jsonv2&accept-language=en`;
 
 	return await fetch(apiUrl).then(res => res.json());
 }

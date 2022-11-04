@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr State Streak
 // @description  Adds a state/province/region streak counter that automatically updates while you play (may not work for all countries, depending on how they define their regions)
-// @version      1.10
+// @version      1.11
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -235,8 +235,8 @@ const stopRound = async () => {
 	let guessCC = responseGuess?.address?.country_code?.toUpperCase() || null;
 	let locationCC = responseLocation?.address?.country_code?.toUpperCase() || null;
 	
-	DATA.state_guess = responseGuess?.address?.state || responseGuess?.address?.territory || responseGuess?.address?.province || responseGuess?.address?.county || 'Undefined';
-	DATA.state_location = responseLocation?.address?.state || responseLocation?.address?.territory || responseLocation?.address?.province || responseLocation?.address?.county || 'Undefined';
+	DATA.state_guess = responseGuess?.address?.state || responseGuess?.address?.territory || responseGuess?.address?.province || responseGuess?.address?.county || responseGuess?.address['ISO3166-2-lvl4'] || 'Undefined';
+	DATA.state_location = responseLocation?.address?.state || responseLocation?.address?.territory || responseLocation?.address?.province || responseLocation?.address?.county || responseLocation?.address['ISO3166-2-lvl4'] || 'Undefined';
 
 	if (guessCC && locationCC && guessCC === locationCC && DATA.state_guess === DATA.state_location) {
 		updateStreak(DATA.streak + 1);
