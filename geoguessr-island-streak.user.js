@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Island Streak
 // @description  Adds an island streak counter for certain countries
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
