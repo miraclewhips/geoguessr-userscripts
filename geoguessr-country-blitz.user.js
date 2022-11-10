@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         GeoGuessr Blitz
+// @name         GeoGuessr Country Blitz
 // @description  Get as many countries/states correct as you can within the time limit
 // @version      1.5
 // @author       miraclewhips
