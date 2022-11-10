@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         GeoGuessr Country Blitz
-// @description  Get as many countries correct as you can within the time limit
-// @version      1.4
+// @name         GeoGuessr Blitz
+// @description  Get as many countries/states correct as you can within the time limit
+// @version      1.5
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -14,7 +14,7 @@
 
 // Put an ISO 639-1 language code (e.g. "en") in between the quotes to return the country name in a specific language. Automatically detects your language by default, if left blank.
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-const LANGUAGE = "";
+const LANGUAGE = "en";
 
 
 
@@ -94,6 +94,8 @@ const save = () => {
 
 const resetGame = () => {
 	let lastTime = CONFIG.last_time_selected || 3;
+	let stateStreak = CONFIG.state_streak_mode;
+	let endOnFail = CONFIG.end_on_fail;
 	let pauseRounds = CONFIG.pause_between_rounds;
 	let pauseGames = CONFIG.pause_between_games;
 
@@ -111,7 +113,9 @@ const resetGame = () => {
 		correct: 0,
 		guessed: 0,
 		in_progress: false,
-		playing_round: false
+		playing_round: false,
+		state_streak_mode: stateStreak,
+		end_on_fail: endOnFail
 	}
 }
 
@@ -129,6 +133,7 @@ const startRound = () => {
 
 	CONFIG.current_round++;
 	CONFIG.game_round = getCurrentRound();
+	CONFIG.round_started = true;
 
 	if(CONFIG.paused) {
 		CONFIG.paused = false;
@@ -176,6 +181,7 @@ const stopRound = () => {
 	const now = new Date();
   
 	if (!CONFIG.round_times[CONFIG.current_round].end) {
+		CONFIG.round_started = false;
 		CONFIG.time = timeDeadline().getTime();
 		CONFIG.playing_round = false;
 
@@ -307,6 +313,16 @@ const toggleBlitz = (e) => {
 	save();
 }
 
+const toggleBlitzStateStreakMode = (e) => {
+	CONFIG.state_streak_mode = e.target.checked;
+	save();
+}
+
+const toggleBlitzEndOnFail = (e) => {
+	CONFIG.end_on_fail = e.target.checked;
+	save();
+}
+
 const toggleBlitzPauseRounds = (e) => {
 	CONFIG.pause_between_rounds = e.target.checked;
 	save();
@@ -330,7 +346,7 @@ const timeFieldChanged = (e) => {
 }
 
 const abandonGame = () => {
-	if(confirm('Are you sure you wish to abandon your current Country Blitz game?')) {
+	if(confirm('Are you sure you wish to abandon your current Blitz game?')) {
 		resetGame();
 		save();
 		setCurrentSettingsLayout();
@@ -370,7 +386,7 @@ const updateBlitzMapSettingsPanel = () => {
 			mapSelectLayout.append(panel);
 
 			panel.innerHTML = `
-				<h2 style="margin-bottom: 0.5em; color:rgb(254, 205, 25);"><em>COUNTRY BLITZ</em></h2>
+				<h2 style="margin-bottom: 0.5em; color:rgb(254, 205, 25);"><em>BLITZ</em></h2>
 
 				<div id="blitz-game-new">
 					<div style="display:flex; justify-content:center; align-items: center;">
@@ -383,6 +399,22 @@ const updateBlitzMapSettingsPanel = () => {
 						<div style="margin-left:3em;">
 							<label style="display:flex; align-items:center;" id="blitz-time">
 								<strong style="margin-right:10px;">TIME (MINUTES)</strong>
+							</label>
+						</div>
+					</div>
+
+					<h4 style="margin-top:1.5em; margin-bottom:0.5em; opacity:0.6;">GENERAL SETTINGS</h4>
+
+					<div style="display:flex; justify-content:center; align-items: center;">
+						<div>
+							<label style="display:flex; align-items:center; cursor:pointer;" id="blitz-state-mode">
+								<strong style="margin-right:10px;">STATE STREAKS</strong>
+							</label>
+						</div>
+
+						<div style="margin-left:3em;">
+							<label style="display:flex; align-items:center; cursor:pointer;" id="blitz-end-on-fail">
+								<strong style="margin-right:10px;">END GAME ON INCORRECT GUESS</strong>
 							</label>
 						</div>
 					</div>
@@ -433,6 +465,22 @@ const updateBlitzMapSettingsPanel = () => {
 			timeLimit.onchange = timeFieldChanged;
 			document.getElementById('blitz-time').append(timeLimit);
 
+			let stateStreaks = document.createElement('input');
+			stateStreaks.id = 'blitz-setting-toggle-rounds';
+			stateStreaks.type = 'checkbox';
+			stateStreaks.className = toggleClass;
+			stateStreaks.checked = CONFIG.state_streak_mode;
+			stateStreaks.onclick = toggleBlitzStateStreakMode;
+			document.getElementById('blitz-state-mode').append(stateStreaks);
+
+			let endOnFail = document.createElement('input');
+			endOnFail.id = 'blitz-setting-toggle-rounds';
+			endOnFail.type = 'checkbox';
+			endOnFail.className = toggleClass;
+			endOnFail.checked = CONFIG.end_on_fail;
+			endOnFail.onclick = toggleBlitzEndOnFail;
+			document.getElementById('blitz-end-on-fail').append(endOnFail);
+
 			let pauseRounds = document.createElement('input');
 			pauseRounds.id = 'blitz-setting-toggle-rounds';
 			pauseRounds.type = 'checkbox';
@@ -478,7 +526,7 @@ const percentage = (n) => {
 	return `${Math.round(n * 100)}%`;
 }
 
-const showResultsScreen = () => {
+const showResultsScreen = (timeExpired = true) => {
 	if(CONFIG.finished) {
 		return;
 	}
@@ -491,16 +539,19 @@ const showResultsScreen = () => {
 	resultScreen = document.createElement('div');
 	resultScreen.id = 'blitz-results';
 
-	let info = `You got <span style="color:#0d0;">${CONFIG.correct}</span> / ${CONFIG.guessed} countries correct (${percentage(CONFIG.correct / CONFIG.guessed)})`;
+	let type = CONFIG.state_streak_mode ? 'states' : 'countries';
+	let info = `You got <span style="color:#0d0;">${CONFIG.correct}</span> / ${CONFIG.guessed} ${type} correct (${percentage(CONFIG.correct / CONFIG.guessed)})`;
 
 	if(CONFIG.guessed === 0) {
 		info = `You didn't make any guesses.`
 	}
 
+	let title = timeExpired ? `Time's up!` : `Incorrect Guess!`;
+
 	resultScreen.innerHTML = `
 		<div style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:99999; background:rgba(0,0,0,0.95); font-family:neo-sans, sans-serif;">
 			<div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; overflow-x:hidden; overflow-y:auto; padding:20px; color:#fff; text-align:center; flex-direction:column;">
-				<h1 style="margin-bottom:0.25em; font-size:4em; color:rgb(254, 205, 25);">Time's up!</h1>
+				<h1 style="margin-bottom:0.25em; font-size:4em; color:rgb(254, 205, 25);">${title}</h1>
 				<h2>${info}</h2>
 				<div id="results-close-button" style="margin-top:2em;"></div>
 			</div>
@@ -539,53 +590,58 @@ const closeResultsScreen = () => {
 	save();
 }
 
-async function getUserAsync(location) {
-    if (location[0] <= -85.05) {
-        return 'AQ';
-    }
+const queryGeoguessrGameData = async (id) => {
+	let apiUrl = `https://www.geoguessr.com/api/v3/games/${id}`;
 
-		let api = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=3&format=jsonv2&accept-language=${LANGUAGE}`;
-	
-    let response = await fetch(api)
-        .then(res => res.json())
-        .then(out => CountryDict[out.address.country_code.toUpperCase()]);
+	if(location.pathname.startsWith("/challenge/")) {
+		apiUrl = `https://www.geoguessr.com/api/v3/challenges/${id}/game`;
+	}
 
-    return response;
+	return await fetch(apiUrl).then(res => res.json());
 }
 
-function checkGuess(index) {
-    const game_tag = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-    let api_url = "";
+const queryOSM = async (location) => {
+	let api = `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${location[1]}&zoom=18&format=jsonv2&accept-language=${LANGUAGE}`;
+	
+	return await fetch(api).then(res => res.json());
+}
 
-    if (location.pathname.startsWith("/game/")) {
-        api_url = "https://www.geoguessr.com/api/v3/games/"+game_tag;
-    } else if (location.pathname.startsWith("/challenge/")) {
-        api_url = "https://www.geoguessr.com/api/v3/challenges/"+game_tag+"/game";
-    };
+const checkGuess = async (index) => {
+	const game_tag = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+	let out = await queryGeoguessrGameData(game_tag);
 
-    fetch(api_url)
-    .then(res => res.json())
-    .then((out) => {
-        let guess_counter = out.player.guesses.length;
-        let guess = [out.player.guesses[guess_counter-1].lat,out.player.guesses[guess_counter-1].lng];
+	let guess_counter = out.player.guesses.length;
+	let guess = [out.player.guesses[guess_counter-1].lat,out.player.guesses[guess_counter-1].lng];
 
-        if (guess[0] == last_guess[0] && guess[1] == last_guess[1]) {
-            return;
-        }
+	if (guess[0] == last_guess[0] && guess[1] == last_guess[1]) {
+			return;
+	}
 
-        last_guess = guess;
-        let location = [out.rounds[guess_counter-1].lat,out.rounds[guess_counter-1].lng];
+	last_guess = guess;
+	let location = [out.rounds[guess_counter-1].lat,out.rounds[guess_counter-1].lng];
 
-        getUserAsync(guess)
-        .then(gue => {
-            getUserAsync(location)
-            .then(loc => {
-				CONFIG.round_times[index].correct = gue == loc;
-				CONFIG.correct = getScoreCorrect();
-				save();
-            });
-        });
-    }).catch(err => { throw err });
+	let responseGuess = await queryOSM(guess);
+	let responseLocation = await queryOSM(location);
+
+	let guessCC = responseGuess?.address?.country_code?.toUpperCase() || null;
+	let locationCC = responseLocation?.address?.country_code?.toUpperCase() || null;
+
+	if(CONFIG.state_streak_mode) {
+		let guessState = responseGuess?.address?.state || responseGuess?.address?.territory || responseGuess?.address?.province || responseGuess?.address?.county || responseGuess?.address['ISO3166-2-lvl4'] || 'Undefined';
+
+		let locationState = responseLocation?.address?.state || responseLocation?.address?.territory || responseLocation?.address?.province || responseLocation?.address?.county || responseLocation?.address['ISO3166-2-lvl4'] || 'Undefined';
+
+		CONFIG.round_times[index].correct = guessCC && locationCC && guessCC === locationCC && guessState === locationState;
+	}else{
+		CONFIG.round_times[index].correct = guessCC && locationCC && guessCC === locationCC;
+	}
+
+	CONFIG.correct = getScoreCorrect();
+	save();
+
+	if(CONFIG.end_on_fail && !CONFIG.round_times[index].correct) {
+		showResultsScreen(false);
+	}
 }
 
 const tick = () => {
@@ -639,6 +695,10 @@ const init = () => {
 			if (resultLayout) {
 				stopRound();
 			} else if (CONFIG.game_round !== getCurrentRound() && !loadingScreenVisible) {
+				if(CONFIG.round_started) {
+					stopRound();
+				}
+
 				startRound();
 			}
 		}
