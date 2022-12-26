@@ -235,8 +235,8 @@ const stopRound = async () => {
 	let guessCC = responseGuess?.address?.country_code?.toUpperCase() || null;
 	let locationCC = responseLocation?.address?.country_code?.toUpperCase() || null;
 	
-	DATA.state_guess = responseGuess?.address?.state || responseGuess?.address?.territory || responseGuess?.address?.province || responseGuess?.address?.county || responseGuess.municipality || responseGuess?.address['ISO3166-2-lvl4'] || 'Undefined';
-	DATA.state_location = responseLocation?.address?.state || responseLocation?.address?.territory || responseLocation?.address?.province || responseLocation?.address?.county || responseLocation.municipality || responseLocation?.address['ISO3166-2-lvl4'] || 'Undefined';
+	DATA.state_guess = responseGuess?.address?.state || responseGuess?.address?.territory || responseGuess?.address?.province || responseGuess?.address?.county || responseGuess?.address?.municipality || responseGuess?.address['ISO3166-2-lvl4'] || 'Undefined';
+	DATA.state_location = responseLocation?.address?.state || responseLocation?.address?.territory || responseLocation?.address?.province || responseLocation?.address?.county || responseLocation?.address?.municipality || responseLocation?.address['ISO3166-2-lvl4'] || 'Undefined';
 
 	if (guessCC && locationCC && guessCC === locationCC && DATA.state_guess === DATA.state_location) {
 		updateStreak(DATA.streak + 1);
