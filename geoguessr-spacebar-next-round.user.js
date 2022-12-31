@@ -21,7 +21,8 @@ document.addEventListener('keypress', e => {
 
 		if(document.activeElement.tagName === 'INPUT') return;
 		
-		const button = document.querySelector('button[class*="button_variantPrimary"]');
+		const button = document.querySelector('*[class*="button_variantPrimary"]');
+		console.log(button)
 		if (button && !button.parentNode.classList.contains('guess-map__guess-button')) {
 			e.preventDefault();
 			button.click();
