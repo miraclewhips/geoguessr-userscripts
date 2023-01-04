@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr More Menu Links
 // @description  Adds extra links (Pro Leagues, Liked Maps, My Maps) to the navigation bar
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -12,11 +12,17 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-more-menu-links.user.js
 // ==/UserScript==
 
-const LINK_PRO_LEAGUES = true;
-const LINK_LIKED_MAPS = true;
-const LINK_MY_MAPS = true;
 
-
+// enable or disable specific menu items
+const LINKS = {
+	home: true,
+	singleplayer: true,
+	multiplayer: true,
+	party: true,
+	pro_leagues: true,
+	liked_maps: true,
+	my_maps: true,
+}
 
 
 
@@ -24,42 +30,68 @@ const LINK_MY_MAPS = true;
 /* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
 /* ############################################################################### */
 
-const createButton = (node, label, url) => {
-	let button = node.cloneNode();
-	button.className = button.className.split(' ')[0];
+const styles = document.createElement('style');
+styles.innerHTML = `
+	#has-extra-buttons div[class*="slanted-wrapper_root__"] {
+		display: none !important;
+	}
+`;
+document.body.append(styles);
 
-	let itemClass = node.querySelector('div[class^="menu_menuItemLabel').className;
-	let labelClass = node.querySelector('div[class^="label_sizeXSmall').className;
-
-	button.innerHTML = `
-		<div class="${itemClass}">
-			<div class="${labelClass}">
-				<a href="${url}">${label}</a>
-			</div>
-		</div>
-	`;
-
+const createButton = (label, url) => {
+	let button = document.createElement('a');
+	button.href = url;
+	button.textContent = label;
+	button.style.color = '#fff';
+	button.style.fontWeight = 'bold';
+	button.style.textTransform = 'uppercase';
 	return button;
 }
 
 const init = () => {
 	const observer = new MutationObserver(() => {
-		const navLayout = document.querySelector('nav[class^="menu_menu__"] ol[class^="menu_menuItems__"]');
+		let navLayout = document.querySelector('div[class*="header_logo__"] + div');
+		
+		if(!navLayout) {
+			navLayout = document.querySelector('header[class*="header_header___"] > div:nth-child(2)');
+		}
 
 		if(navLayout && navLayout.id !== 'has-extra-buttons') {
-			if(LINK_PRO_LEAGUES) {
-				navLayout.append(createButton(navLayout.children[0], 'Pro Leagues', '/leagues'));
+			let navList = document.createElement('div');
+			navList.innerHTML = '';
+			navList.style.display = 'flex';
+			navList.style.gap = '30px';
+
+			if(LINKS.home) {
+				navList.append(createButton('Home', '/'));
 			}
 
-			if(LINK_LIKED_MAPS) {
-				navLayout.append(createButton(navLayout.children[0], 'Liked Maps', '/me/likes'));
+			if(LINKS.singleplayer) {
+				navList.append(createButton('Singleplayer', '/singleplayer'));
 			}
 
-			if(LINK_MY_MAPS) {
-				navLayout.append(createButton(navLayout.children[0], 'My Maps', '/me/maps'));
+			if(LINKS.multiplayer) {
+				navList.append(createButton('Multiplayer', '/multiplayer'));
+			}
+
+			if(LINKS.party) {
+				navList.append(createButton('Party', '/play-with-friends'));
+			}
+
+			if(LINKS.pro_leagues) {
+				navList.append(createButton('Pro Leagues', '/leagues'));
+			}
+
+			if(LINKS.liked_maps) {
+				navList.append(createButton('Liked Maps', '/me/likes'));
+			}
+
+			if(LINKS.my_maps) {
+				navList.append(createButton('My Maps', '/me/maps'));
 			}
 
 			navLayout.id = 'has-extra-buttons';
+			navLayout.append(navList);
 		}
 	});
 
