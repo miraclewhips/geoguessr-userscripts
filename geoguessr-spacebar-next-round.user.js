@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Spacebar Next Round
 // @description  Press spacebar to quickly start next round, or restart next game etc
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -22,8 +22,13 @@ document.addEventListener('keypress', e => {
 		if(document.activeElement.tagName === 'INPUT') return;
 		
 		const button = document.querySelector('*[class*="button_variantPrimary"]');
-		console.log(button)
-		if (button && !button.parentNode.classList.contains('guess-map__guess-button')) {
+		const button2 = document.querySelector('*[class*="button_variantSecondary"]');
+		if(!button) return;
+
+		if(button2 && button.textContent.toLowerCase() === 'next map') {
+			e.preventDefault();
+			button2.click();
+		}else if (!button.parentNode.classList.contains('guess-map__guess-button')) {
 			e.preventDefault();
 			button.click();
 		}
