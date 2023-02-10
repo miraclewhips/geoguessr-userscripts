@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         GeoGuessr Team Duels Bot Instaguess
-// @description  Use in conjunction with a bot account to instaguess on team duels
+// @description  Use in conjunction with a bot account to instaguess (or guess after a specified delay) on team duels
 // @version      1.0
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
