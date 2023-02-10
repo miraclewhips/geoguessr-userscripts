@@ -13,6 +13,7 @@
 // ==/UserScript==
 
 const SECONDS_TO_WAIT_BEFORE_GUESSING = 0;
+const SHOW_WARNING_MESSAGE = true;
 
 
 
@@ -67,27 +68,29 @@ const init = () => {
 
 init();
 
-const styles = document.createElement('style');
-styles.innerHTML = `
-	#mw-ig-warning {
-		position: fixed;
-		bottom: 10px;
-		left: 50%;
-		z-index: 999999999;
-		background: #f00;
-		color: #fff;
-		font-weight: bold;
-		font-size: 20px;
-		padding: 10px;
-		border-radius: 10px;
-		border: 3px solid #400;
-		transform: translateX(-50%);
-	}
-`;
-
-const warning = document.createElement('div');
-warning.innerText = 'INSTAGUESS SCRIPT ACTIVE!';
-warning.id = 'mw-ig-warning';
-
-document.body.append(styles);
-document.body.append(warning);
+if(SHOW_WARNING_MESSAGE) {
+	const styles = document.createElement('style');
+	styles.innerHTML = `
+		#mw-ig-warning {
+			position: fixed;
+			bottom: 10px;
+			left: 50%;
+			z-index: 999999999;
+			background: #f00;
+			color: #fff;
+			font-weight: bold;
+			font-size: 20px;
+			padding: 10px;
+			border-radius: 10px;
+			border: 3px solid #400;
+			transform: translateX(-50%);
+		}
+	`;
+	
+	const warning = document.createElement('div');
+	warning.innerText = 'INSTAGUESS SCRIPT ACTIVE!';
+	warning.id = 'mw-ig-warning';
+	
+	document.body.append(styles);
+	document.body.append(warning);
+}
