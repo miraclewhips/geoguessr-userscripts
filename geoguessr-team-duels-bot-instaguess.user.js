@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         GeoGuessr Team Duels Bot Instaguess
-// @description  Use in conjunction with a bot account to instaguess (or guess after a specified delay) on team duels
+// @description  Use in conjunction with a bot account to instaguess on Antarctica (or guess after a specified delay) on team duels
 // @version      1.0
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
@@ -66,3 +66,28 @@ const init = () => {
 }
 
 init();
+
+const styles = document.createElement('style');
+styles.innerHTML = `
+	#mw-ig-warning {
+		position: fixed;
+		bottom: 10px;
+		left: 50%;
+		z-index: 999999999;
+		background: #f00;
+		color: #fff;
+		font-weight: bold;
+		font-size: 20px;
+		padding: 10px;
+		border-radius: 10px;
+		border: 3px solid #400;
+		transform: translateX(-50%);
+	}
+`;
+
+const warning = document.createElement('div');
+warning.innerText = 'INSTAGUESS SCRIPT ACTIVE!';
+warning.id = 'mw-ig-warning';
+
+document.body.append(styles);
+document.body.append(warning);
