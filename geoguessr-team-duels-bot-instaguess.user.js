@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Team Duels Bot Instaguess
 // @description  Use in conjunction with a bot account to instaguess on Antarctica (or guess after a specified delay) on team duels
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -48,6 +48,9 @@ const init = () => {
 
 	const observer = new MutationObserver(() => {
 		if(location.pathname.indexOf('/team-duels/') !== 0) return;
+
+		const playAgain = document.querySelector('div[class*="game-finished_bottomContent__"] button[class*="button_variantPrimary__"]');
+		if(playAgain) playAgain.click();
 
 		const roundNumber = document.querySelector('p[class*="new-round_roundNumber__"]');
 
