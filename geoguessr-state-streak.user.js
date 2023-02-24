@@ -129,7 +129,7 @@ const createStreakElement = () => {
 	score.style.fontSize = '20px';
 	score.style.color = '#fff';
 	score.style.margin = '5px 0';
-    score.style.width = '100%';
+	score.style.width = '100%';
 	return score;
 }
 
@@ -139,21 +139,21 @@ const updateSummaryPanel = () => {
 
 	if(scoreLayout) {
 		GM_addStyle( `
-            div[class^='result-layout_topNew__'] {
-                max-height: calc(100vh - 10.3rem);
-            }
-        `);
-        GM_addStyle( `
-            div[class^='round-result_newWrapper__'] {
-                display: flex;
-                flex-wrap: wrap !important;
-            }
-        `);
+			div[class^='result-layout_topNew__'] {
+				max-height: calc(100vh - 10.3rem);
+			}
+        	`);
+        	GM_addStyle( `
+			div[class^='round-result_newWrapper__'] {
+				display: flex;
+				flex-wrap: wrap !important;
+			}
+        	`);
         if(!document.getElementById('streak-score-panel-summary')) {
-			let score = createStreakElement();
-			score.id = 'streak-score-panel-summary';
-			scoreLayout.prepend(score);
-		}
+		let score = createStreakElement();
+		score.id = 'streak-score-panel-summary';
+		scoreLayout.prepend(score);
+	}
 		document.getElementById('streak-score-panel-summary').innerHTML = createStreakText();
 	}
 
