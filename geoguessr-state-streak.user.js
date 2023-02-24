@@ -5,7 +5,7 @@
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
-// @grant        none
+// @grant        GM_addStyle
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-state-streak.user.js
@@ -129,20 +129,31 @@ const createStreakElement = () => {
 	score.style.fontSize = '20px';
 	score.style.color = '#fff';
 	score.style.margin = '5px 0';
+    score.style.width = '100%';
 	return score;
 }
 
 const updateSummaryPanel = () => {
-	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_score__"]');
-	const finalScoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="standard-final-result_score__"]');
+	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_newWrapper__"]');
+	const finalScoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="standard-final-result_newWrapper__"]');
 
 	if(scoreLayout) {
-		if(!document.getElementById('streak-score-panel-summary')) {
+		GM_addStyle( `
+            div[class^='result-layout_topNew__'] {
+                max-height: calc(100vh - 10.3rem);
+            }
+        `);
+        GM_addStyle( `
+            div[class^='round-result_newWrapper__'] {
+                display: flex;
+                flex-wrap: wrap !important;
+            }
+        `);
+        if(!document.getElementById('streak-score-panel-summary')) {
 			let score = createStreakElement();
 			score.id = 'streak-score-panel-summary';
-			scoreLayout.append(score);
+			scoreLayout.prepend(score);
 		}
-
 		document.getElementById('streak-score-panel-summary').innerHTML = createStreakText();
 	}
 
@@ -150,7 +161,7 @@ const updateSummaryPanel = () => {
 		if(!document.getElementById('streak-score-panel-final')) {
 			let score = createStreakElement();
 			score.id = 'streak-score-panel-final';
-			finalScoreLayout.append(score);
+			finalScoreLayout.prepend(score);
 		}
 
 		document.getElementById('streak-score-panel-final').innerHTML = createStreakText();
