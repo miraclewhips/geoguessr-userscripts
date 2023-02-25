@@ -68,14 +68,14 @@ const checkGameMode = () => {
 }
 
 const updateRoundPanel = () => {
-	let panel = document.getElementById('streak-counter-panel');
+	let panel = document.getElementById('county-streak-counter-panel');
 
 	if(!panel) {
 		let gameScore = document.querySelector('.game-layout__status div[class^="status_section"][data-qa="score"]');
 
 		if(gameScore) {
 			let panel = document.createElement('div');
-			panel.id = 'streak-counter-panel';
+			panel.id = 'county-streak-counter-panel';
 			panel.style.display = 'flex';
 
 			let classLabel = gameScore.querySelector('div[class^="status_label"]').className;
@@ -84,7 +84,7 @@ const updateRoundPanel = () => {
 			panel.innerHTML = `
 				<div class="${gameScore.getAttribute('class')}">
 					<div class="${classLabel}">COUNTY STREAK</div>
-					<div id="streak-counter-value" class="${valueLabel}"></div>
+					<div id="county-streak-counter-value" class="${valueLabel}"></div>
 				</div>
 			`;
 
@@ -92,7 +92,7 @@ const updateRoundPanel = () => {
 		}
 	}
 	
-	let streak = document.getElementById('streak-counter-value');
+	let streak = document.getElementById('county-streak-counter-value');
 
 	if(streak) {
 		streak.innerText = DATA.streak;
@@ -126,34 +126,29 @@ const createStreakText = () => {
 
 const createStreakElement = () => {
 	let score = document.createElement('div');
-	score.style.fontSize = '20px';
+	score.style.fontSize = '18px';
+	score.style.fontWeight = '500';
 	score.style.color = '#fff';
-	score.style.margin = '5px 0';
+	score.style.padding = '10px';
+	score.style.paddingBottom = '0';
+	score.style.position = 'absolute';
+	score.style.bottom = '100%';
+	score.style.width = '100%';
+	score.style.background = 'var(--ds-color-purple-100)';
 	return score;
 }
 
 const updateSummaryPanel = () => {
-	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_score__"]');
-	const finalScoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="standard-final-result_score__"]');
+	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_newWrapper__"]');
 
 	if(scoreLayout) {
-		if(!document.getElementById('streak-score-panel-summary')) {
+		if(!document.getElementById('county-streak-score-panel-summary')) {
 			let score = createStreakElement();
-			score.id = 'streak-score-panel-summary';
-			scoreLayout.append(score);
+			score.id = 'county-streak-score-panel-summary';
+			scoreLayout.parentNode.insertBefore(score, scoreLayout);
 		}
 
-		document.getElementById('streak-score-panel-summary').innerHTML = createStreakText();
-	}
-
-	if(finalScoreLayout) {
-		if(!document.getElementById('streak-score-panel-final')) {
-			let score = createStreakElement();
-			score.id = 'streak-score-panel-final';
-			finalScoreLayout.append(score);
-		}
-
-		document.getElementById('streak-score-panel-final').innerHTML = createStreakText();
+		document.getElementById('county-streak-score-panel-summary').innerHTML = createStreakText();
 	}
 }
 
@@ -245,7 +240,17 @@ const stopRound = async () => {
 	}
 }
 
+const checkStreakIsLatest = () => {
+	let data = JSON.parse(window.localStorage.getItem('geoCountyStreak'));
+
+	if(data) {
+		DATA.streak = data.streak;
+	}
+}
+
 const updateStreak = (streak) => {
+	checkStreakIsLatest();
+
 	DATA.previous_streak = DATA.streak;
 	DATA.streak = streak;
 
@@ -306,16 +311,6 @@ const init = () => {
 
 	const observer = new MutationObserver(() => {
 		checkState();
-
-		setTimeout(checkState, 50);
-		setTimeout(checkState, 100);
-		setTimeout(checkState, 250);
-		setTimeout(checkState, 500);
-		setTimeout(checkState, 750);
-		setTimeout(checkState, 1000);
-		setTimeout(checkState, 1500);
-		setTimeout(checkState, 2000);
-		setTimeout(checkState, 3000);
 	});
 
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
@@ -323,4 +318,5 @@ const init = () => {
 	window.addEventListener('mouseup', checkState);
 }
 
+window.onload = updateStreakPanels;
 init();
