@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         GeoGuessr State Streak
 // @description  Adds a state/province/region streak counter that automatically updates while you play (may not work for all countries, depending on how they define their regions)
-// @version      1.12
-// @author       miraclewhips
+// @version      1.13
+// @author       miraclewhips with new site layout fix by somegonker
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        GM_addStyle
@@ -91,7 +91,7 @@ const updateRoundPanel = () => {
 			gameScore.parentNode.append(panel);
 		}
 	}
-	
+
 	let streak = document.getElementById('streak-counter-value');
 
 	if(streak) {
@@ -140,16 +140,16 @@ const updateSummaryPanel = () => {
 	if(scoreLayout) {
 		GM_addStyle( `
 			div[class^='result-layout_topNew__'] {
-				max-height: calc(100vh - 10.3rem);
+				max-height: calc(100vh - 10.2rem);
 			}
-        	`);
-        	GM_addStyle( `
+			`);
+			GM_addStyle( `
 			div[class^='round-result_newWrapper__'] {
 				display: flex;
 				flex-wrap: wrap !important;
 			}
-        	`);
-        if(!document.getElementById('streak-score-panel-summary')) {
+			`);
+		if(!document.getElementById('streak-score-panel-summary')) {
 		let score = createStreakElement();
 		score.id = 'streak-score-panel-summary';
 		scoreLayout.prepend(score);
@@ -159,6 +159,22 @@ const updateSummaryPanel = () => {
 
 	if(finalScoreLayout) {
 		if(!document.getElementById('streak-score-panel-final')) {
+			GM_addStyle( `
+			div[class^='result-layout_topNew__'] {
+				max-height: calc(100vh - 11.2rem);
+			}
+			`);
+			GM_addStyle( `
+			div[class^='result-layout_bottomNew__'] {
+				max-height: 11.2rem;
+			}
+			`);
+			GM_addStyle( `
+			div[class^='standard-final-result_newWrapper__'] {
+				display: flex;
+				flex-wrap: wrap !important;
+			} 
+			`);
 			let score = createStreakElement();
 			score.id = 'streak-score-panel-final';
 			finalScoreLayout.prepend(score);
@@ -245,7 +261,7 @@ const stopRound = async () => {
 
 	let guessCC = responseGuess?.address?.country_code?.toUpperCase() || null;
 	let locationCC = responseLocation?.address?.country_code?.toUpperCase() || null;
-	
+
 	DATA.state_guess = responseGuess?.address?.state || responseGuess?.address?.territory || responseGuess?.address?.province || responseGuess?.address?.county || responseGuess?.address?.municipality || responseGuess?.address['ISO3166-2-lvl4'] || 'Undefined';
 	DATA.state_location = responseLocation?.address?.state || responseLocation?.address?.territory || responseLocation?.address?.province || responseLocation?.address?.county || responseLocation?.address?.municipality || responseLocation?.address['ISO3166-2-lvl4'] || 'Undefined';
 
@@ -294,7 +310,7 @@ document.addEventListener('keypress', (e) => {
 const checkState = () => {
 	const gameLayout = document.querySelector('.game-layout');
 	const resultLayout = document.querySelector('div[class^="result-layout_root"]');
-	const finalScoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="standard-final-result_score__"]');
+	const finalScoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="standard-final-result_newWrapper__"]');
 
 	if(gameLayout) {
 		if (DATA.round !== getCurrentRound() || DATA.gameId !== getGameId()) {
