@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr County Streak
 // @description  Adds a county streak counter that automatically updates while you play (may not work for all countries, depending on how they define their counties)
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -139,7 +139,7 @@ const createStreakElement = () => {
 }
 
 const updateSummaryPanel = () => {
-	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_newWrapper__"]');
+	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_wrapper__"]');
 
 	if(scoreLayout) {
 		if(!document.getElementById('county-streak-score-panel-summary')) {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Quad Streak
 // @description  Draws a grid over the minimap, and tracks how many correct quads you guess in a row
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -400,7 +400,7 @@ const createStreakElement = () => {
 }
 
 const updateSummaryPanel = () => {
-	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_newWrapper__"]');
+	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_wrapper__"]');
 
 	if(scoreLayout) {
 		if(!document.getElementById('quad-streak-score-panel-summary')) {

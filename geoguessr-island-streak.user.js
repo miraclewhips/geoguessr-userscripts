@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Island Streak
 // @description  Adds an island streak counter for certain countries
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -135,7 +135,7 @@ const createStreakElement = () => {
 }
 
 const updateSummaryPanel = () => {
-	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_newWrapper__"]');
+	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_wrapper__"]');
 
 	if(scoreLayout) {
 		if(!document.getElementById('island-streak-score-panel-summary')) {
