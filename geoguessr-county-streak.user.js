@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr County Streak
 // @description  Adds a county streak counter that automatically updates while you play (may not work for all countries, depending on how they define their counties)
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -232,6 +232,9 @@ const stopRound = async () => {
 	
 	DATA.state_guess = responseGuess?.address?.county || 'Undefined';
 	DATA.state_location = responseLocation?.address?.county || 'Undefined';
+
+	DATA.state_guess = responseGuess?.address?.county || responseGuess?.address?.city || 'Undefined';
+	DATA.state_location = responseLocation?.address?.county || responseLocation?.address?.city || 'Undefined';
 
 	if (guessCC && locationCC && guessCC === locationCC && DATA.state_guess === DATA.state_location) {
 		updateStreak(DATA.streak + 1);
