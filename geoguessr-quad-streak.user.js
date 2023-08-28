@@ -1,31 +1,42 @@
 // ==UserScript==
 // @name         GeoGuessr Quad Streak
 // @description  Draws a grid over the minimap, and tracks how many correct quads you guess in a row
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        none
+// @run-at       document-start
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-quad-streak.user.js
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-quad-streak.user.js
 // ==/UserScript==
 
+/* ------------------------------------------------------------------------------- */
+/* ----- SETTINGS (MUST RELOAD PAGE FOR CHANGES TO TAKE EFFECT) ------------------ */
+/* ------------------------------------------------------------------------------- */
+const SHOW_LABELS = false; // show A1, A2, B1 etc on the grid
+const GRID_COLS = 20;      // number of columns in the grid
+const GRID_ROWS = 16;      // number of rows in the grid
+const LAT_MAX_NORTH = 85;  // northern-most point to draw the grid
+const LAT_MAX_SOUTH = -85; // southern-most point to draw the grid
+const LNG_MAX_WEST = -180; // western-most point to draw the grid
+const LNG_MAX_EAST = 180;  // eastern-most point to draw the grid
+const CHALLENGE = true;    // Set to false to disable streaks on challenge links
+const AUTOMATIC = true;    // Set to false for a manual counter (controlled by keyboard shortcuts only)
 
-// show A1, A2, B1 etc on the grid
-const SHOW_LABELS = false;
-
-// grid size
-const GRID_COLS = 20;
-const GRID_ROWS = 16;
-
-// grid bounds
-const LAT_MAX_NORTH = 85;
-const LAT_MAX_SOUTH = -85;
-const LNG_MAX_WEST = -180;
-const LNG_MAX_EAST = 180;
+/* ------------------------------------------------------------------------------- */
+/* ----- KEYBOARD SHORTCUTS (MUST RELOAD PAGE FOR CHANGES TO TAKE EFFECT) -------- */
+/* ------------------------------------------------------------------------------- */
+const KEYBOARD_SHORTCUTS = {
+	reset: '0',     // reset streak to 0
+	increment: '1', // increment streak by 1
+	decrement: '2', // decrement streak by 1
+	restore: '8',   // restore your streak to it's previous value
+};
 
 
 
@@ -33,24 +44,24 @@ const LNG_MAX_EAST = 180;
 /* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
 /* ############################################################################### */
 
-const toLetters = (num) => {
+function toLetters(num) {
 	var mod = num % 26,
 		pow = num / 26 | 0,
 		out = mod ? String.fromCharCode(64 + mod) : (--pow, 'Z');
 	return pow ? toLetters(pow) + out : out;
 }
 
-const gridNumber = (x, y) => {
+function gridNumber(x, y) {
 	return `${toLetters(x+1)}${y+1}`;
 }
 
-const getGridLoc = (lat, lng) => {
-	let x = Math.floor(((lng - LNG_MAX_WEST) / (LNG_MAX_EAST - LNG_MAX_WEST)) * GRID_COLS);
-	let y = Math.floor(((lat - LAT_MAX_NORTH) / (LAT_MAX_SOUTH - LAT_MAX_NORTH)) * GRID_ROWS);
+function getGridLoc(pos) {
+	let x = Math.floor(((pos.lng - LNG_MAX_WEST) / (LNG_MAX_EAST - LNG_MAX_WEST)) * GRID_COLS);
+	let y = Math.floor(((pos.lat - LAT_MAX_NORTH) / (LAT_MAX_SOUTH - LAT_MAX_NORTH)) * GRID_ROWS);
 	return gridNumber(x, y);
 }
 
-const createGrid = () => {
+function createGrid(MWMapInstance) {
 	class MapGrid extends google.maps.OverlayView {
 		divs = [];
 	
@@ -201,359 +212,33 @@ const createGrid = () => {
 		}
 	}
 
-	MWMapGrid = new MapGrid();
+	let MWMapGrid = new MapGrid();
 	MWMapGrid.setMap(MWMapInstance);
 }
 
+var __awaiter=this&&this.__awaiter||function(l,_,i,r){function h(a){return a instanceof i?a:new i(function(d){d(a)})}return new(i||(i=Promise))(function(a,d){function m(o){try{c(r.next(o))}catch(g){d(g)}}function f(o){try{c(r.throw(o))}catch(g){d(g)}}function c(o){o.done?a(o.value):h(o.value).then(m,f)}c((r=r.apply(l,_||[])).next())})},GeoGuessrEventFramework;(function(){let l,_,i,r,h;function a(n){return new Promise(t=>setTimeout(t,n))}function d(n,t,e){const s=n.onload;n.onload=u=>{const p=window.google;p&&(t.disconnect(),e(p)),s&&s.call(n,u)}}function m(n){for(const t of n)for(const e of t.addedNodes){const s=e;if(s&&s.src&&s.src.startsWith("https://maps.googleapis.com/"))return s}return null}function f(n){new MutationObserver((t,e)=>{const s=m(t);s&&d(s,e,n)}).observe(document.documentElement,{childList:!0,subtree:!0})}function c(){const n=l.getPosition();return n?{lat:n.lat(),lng:n.lng()}:{lat:null,lng:null}}function o(){return __awaiter(this,void 0,void 0,function*(){return yield i,l?(yield a(100),new Promise(n=>{if(r){let t=window.google.maps.event.addListener(l,"status_changed",()=>{const e=c();r.lat!=e.lat&&r.lng!=e.lng&&(window.google.maps.event.removeListener(t),r=e,n(e))})}else{const t=c();r=t,n(t)}})):{lat:null,lng:null}})}i=new Promise((n,t)=>{document.addEventListener("DOMContentLoaded",()=>{f(()=>{if(!window.google)return t();const e=[];e.push(new Promise(s=>{window.google.maps.StreetViewPanorama=class extends window.google.maps.StreetViewPanorama{constructor(...u){super(...u),l=this,s()}}})),e.push(new Promise(s=>{window.google.maps.Map=class extends window.google.maps.Map{constructor(...u){super(...u),_=this,createGrid(this),s()}}})),Promise.all(e).then(()=>n())})})});class g{constructor(){this.events=new EventTarget,this.state=this.defaultState(),this.init(),this.loadState();let t=document.querySelector("#__next");if(!t)return;new MutationObserver(this.checkState.bind(this)).observe(t,{subtree:!0,childList:!0}),i.then(()=>{_.addListener("click",s=>{!this.state.current_round||!this.state.round_in_progress||(this.state.rounds[this.state.current_round-1].player_guess={lat:s.latLng.lat(),lng:s.latLng.lng()})})})}init(){return __awaiter(this,void 0,void 0,function*(){return this.loadedPromise||(this.loadedPromise=Promise.resolve(this)),this.loadedPromise})}defaultState(){return{current_game_id:"",is_challenge_link:!1,current_round:0,round_in_progress:!1,game_in_progress:!0,total_score:0,rounds:[]}}loadState(){let t=window.localStorage.getItem("GeoGuessrEventFramework_STATE");if(!t)return;let e=JSON.parse(t);t&&(e.current_round=0,e.round_in_progress=!1,e.game_in_progress=!0,Object.assign(this.state,this.defaultState(),e),this.saveState())}saveState(){window.localStorage.setItem("GeoGuessrEventFramework_STATE",JSON.stringify(this.state))}getCurrentRound(){const t=document.querySelector('div[class^="status_inner__"]>div[data-qa="round-number"]'),e=t?.children[1].textContent;return e?parseInt(e.split(/\//gi)[0].trim()):0}getGameMode(){if(location.pathname.startsWith("/game/"))return"game";if(location.pathname.startsWith("/challenge/"))return"challenge"}getGameId(){return window.location.href.substring(window.location.href.lastIndexOf("/")+1)}startRound(){return __awaiter(this,void 0,void 0,function*(){this.getGameMode()&&(this.state.current_game_id!==this.getGameId()&&(this.state=this.defaultState()),this.state.current_round=this.getCurrentRound(),this.state.round_in_progress=!0,this.state.game_in_progress=!0,this.state.current_game_id=this.getGameId(),this.state.is_challenge_link=this.getGameMode()=="challenge",this.state.current_round&&(this.state.rounds[this.state.current_round-1]={score:0,location:{lat:null,lng:null},player_guess:{lat:null,lng:null}}),this.saveState(),this.state.current_round===1&&this.events.dispatchEvent(new CustomEvent("game_start",{detail:this.state})),this.events.dispatchEvent(new CustomEvent("round_start",{detail:this.state})),o().then(t=>{h=t}))})}stopRound(){var t;return __awaiter(this,void 0,void 0,function*(){this.state.round_in_progress=!1,yield a(1);const e=(t=document.querySelector('div[class^="round-result_pointsIndicatorWrapper__"] div[class^="shadow-text_root__"]'))===null||t===void 0?void 0:t.textContent;if(e){const s=parseInt(e.replace(/[^\d]/g,""));!isNaN(s)&&this.state.current_round&&(this.state.rounds[this.state.current_round-1].score=s)}this.state.total_score=this.state.rounds.reduce((s,u)=>s+=u.score,0),this.state.current_round&&h&&(this.state.rounds[this.state.current_round-1].location=h),this.saveState(),this.events.dispatchEvent(new CustomEvent("round_end",{detail:this.state})),this.state.current_round===5&&this.events.dispatchEvent(new CustomEvent("game_end",{detail:this.state}))})}checkState(){const t=document.querySelector(".game-layout"),e=document.querySelector('div[class^="round-result_wrapper__"]'),s=document.querySelector('div[class^="result-layout_root__"] div[class^="result-overlay_overlayContent__"]');t&&(this.state.current_round!==this.getCurrentRound()||this.state.current_game_id!==this.getGameId()?(this.state.round_in_progress&&this.stopRound(),this.startRound()):e&&this.state.round_in_progress?this.stopRound():s&&this.state.game_in_progress&&(this.state.game_in_progress=!1))}}GeoGuessrEventFramework=new g,console.log("GeoGuessr Event Framework initialised: https://github.com/miraclewhips/geoguessr-event-framework")})();
 
+function quadMatch(state, guess, location) {
+	const guessQuad = getGridLoc(guess);
+	const guessLocation = getGridLoc(location);
 
-
-
-
-
-
-
-
-
-
-
-let MWMapInstance;
-let MWMapGrid;
-
-// Script injection, extracted from unityscript extracted from extenssr:
-// https://gitlab.com/nonreviad/extenssr/-/blob/main/src/injected_scripts/maps_api_injecter.ts
-function overrideOnLoad(googleScript, observer, overrider) {
-	const oldOnload = googleScript.onload
-	googleScript.onload = (event) => {
-			const google = window.google
-			if (google) {
-					observer.disconnect()
-					overrider(google)
-			}
-			if (oldOnload) {
-					oldOnload.call(googleScript, event)
-			}
+	return {
+		player_guess_name: guessQuad,
+		actual_location_name: guessLocation,
+		match: guessQuad == guessLocation
 	}
 }
 
-function grabGoogleScript(mutations) {
-	for (const mutation of mutations) {
-			for (const newNode of mutation.addedNodes) {
-					const asScript = newNode
-					if (asScript && asScript.src && asScript.src.startsWith('https://maps.googleapis.com/')) {
-							return asScript
-					}
-			}
-	}
-	return null
-}
-
-function injecter(overrider) {
-	if (document.documentElement)
-	{
-			injecterCallback(overrider);
-	}
-}
-
-function injecterCallback(overrider)
-{
-	new MutationObserver((mutations, observer) => {
-			const googleScript = grabGoogleScript(mutations)
-			if (googleScript) {
-					overrideOnLoad(googleScript, observer, overrider)
-			}
-	}).observe(document.documentElement, { childList: true, subtree: true })
-}
-
-document.addEventListener('DOMContentLoaded', (event) => {
-	injecter(() => {
-		google.maps.Map = class extends google.maps.Map {
-			constructor(...args) {
-					super(...args);
-					MWMapInstance = this;
-					createGrid();
-			}
-		}
-	});
+const GSF = new GeoGuessrStreakFramework({
+	storage_identifier: 'MW_GeoGuessrQuadStreak',
+	name: 'Quad Streak',
+	terms: {
+		single: 'quad',
+		plural: 'quads'
+	},
+	enabled_on_challenges: CHALLENGE,
+	automatic: AUTOMATIC,
+	query_openstreetmap: false,
+	custom_match_function: quadMatch,
+	keyboard_shortcuts: KEYBOARD_SHORTCUTS,
 });
-
-
-
-
-
-
-
-
-
-
-
-// streak stuff
-let DATA = {};
-
-const load = () => {
-	DATA = {
-		round: 0,
-		round_started: false,
-		game_finished: false,
-		checking_api: false,
-		streak: 0,
-		previous_streak: 0,
-		streak_backup: 0,
-		last_guess: [0, 0]
-	}
-
-	let data = JSON.parse(window.localStorage.getItem('geoQuadStreak'));
-
-	if(data) {
-		data.round = 0;
-		data.round_started = false;
-		data.game_finished = false;
-		data.checking_api = false;
-
-		Object.assign(DATA, data);
-		save();
-	}
-}
-
-const save = () => {
-	window.localStorage.setItem('geoQuadStreak', JSON.stringify(DATA));
-}
-
-const getCurrentRound = () => {
-	const roundNode = document.querySelector('div[class^="status_inner__"]>div[data-qa="round-number"]');
-	return parseInt(roundNode.children[1].textContent.split(/\//gi)[0].trim(), 10);
-}
-
-const checkGameMode = () => {
-	return (location.pathname.startsWith("/game/") || location.pathname.startsWith("/challenge/"));
-}
-
-const updateRoundPanel = () => {
-	let panel = document.getElementById('quad-streak-counter-panel');
-
-	if(!panel) {
-		let gameScore = document.querySelector('.game-layout__status div[class^="status_section"][data-qa="score"]');
-
-		if(gameScore) {
-			let panel = document.createElement('div');
-			panel.id = 'quad-streak-counter-panel';
-			panel.style.display = 'flex';
-
-			let classLabel = gameScore.querySelector('div[class^="status_label"]').className;
-			let valueLabel = gameScore.querySelector('div[class^="status_value"]').className;
-
-			panel.innerHTML = `
-				<div class="${gameScore.getAttribute('class')}">
-					<div class="${classLabel}">QUAD STREAK</div>
-					<div id="quad-streak-counter-value" class="${valueLabel}"></div>
-				</div>
-			`;
-
-			gameScore.parentNode.append(panel);
-		}
-	}
-	
-	let streak = document.getElementById('quad-streak-counter-value');
-
-	if(streak) {
-		streak.innerText = DATA.streak;
-	}
-}
-
-const createStreakText = () => {
-	if(DATA.checking_api) {
-		return `Loading...`;
-	}
-
-	if(DATA.streak > 0) {
-		return `It was <span style="color:#6cb928">${DATA.grid_location}!</span> Quad Streak: <span style="color:#fecd19">${DATA.streak}</span>`;
-	}else{
-		let suffix = `quads in a row.`;
-
-		switch(DATA.previous_streak) {
-			case 1:
-				suffix = `quad.`;
-		}
-
-		let previousGuessText = `You didn't make a guess.`;
-
-		if(DATA.grid_guess) {
-			previousGuessText = `You guessed <span style="color:#f95252">${DATA.grid_guess}</span>, unfortunately it was <span style="color:#6cb928">${DATA.grid_location}</span>.`;
-		}
-
-		return `${previousGuessText} Your streak ended after correctly guessing <span style="color:#fecd19">${DATA.previous_streak}</span> ${suffix}`;
-	}
-}
-
-const createStreakElement = () => {
-	let score = document.createElement('div');
-	score.style.fontSize = '18px';
-	score.style.fontWeight = '500';
-	score.style.color = '#fff';
-	score.style.padding = '10px';
-	score.style.paddingBottom = '0';
-	score.style.position = 'absolute';
-	score.style.bottom = '100%';
-	score.style.width = '100%';
-	score.style.background = 'var(--ds-color-purple-100)';
-	return score;
-}
-
-const updateSummaryPanel = () => {
-	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_wrapper__"]');
-
-	if(scoreLayout) {
-		if(!document.getElementById('quad-streak-score-panel-summary')) {
-			let score = createStreakElement();
-			score.id = 'quad-streak-score-panel-summary';
-			scoreLayout.parentNode.insertBefore(score, scoreLayout);
-		}
-
-		document.getElementById('quad-streak-score-panel-summary').innerHTML = createStreakText();
-	}
-}
-
-const getGameId = () => {
-	return window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-}
-
-const startRound = () => {
-	if(!checkGameMode()) return;
-
-	DATA.round = getCurrentRound();
-	DATA.round_started = true;
-	DATA.game_finished = false;
-	DATA.gameId = getGameId();
-
-	updateRoundPanel();
-}
-
-const queryGeoguessrGameData = async (id) => {
-	let apiUrl = `https://www.geoguessr.com/api/v3/games/${id}`;
-
-	if(location.pathname.startsWith("/challenge/")) {
-		apiUrl = `https://www.geoguessr.com/api/v3/challenges/${id}/game`;
-	}
-
-	return await fetch(apiUrl).then(res => res.json());
-}
-
-const stopRound = async () => {
-	DATA.round_started = false;
-
-	if(!checkGameMode()) return;
-
-	DATA.checking_api = true;
-	updateStreakPanels();
-
-	let responseGeoGuessr = await queryGeoguessrGameData(DATA.gameId);
-	DATA.checking_api = false;
-
-	let guess_counter = responseGeoGuessr.player.guesses.length;
-	let guess = [responseGeoGuessr.player.guesses[guess_counter-1].lat, responseGeoGuessr.player.guesses[guess_counter-1].lng];
-
-	if (guess[0] == DATA.last_guess[0] && guess[1] == DATA.last_guess[1]) {
-		updateStreakPanels();
-		return;
-	}
-
-	if(responseGeoGuessr.player.guesses[guess_counter-1].timedOut && !responseGeoGuessr.player.guesses[guess_counter-1].timedOutWithGuess) {
-		DATA.grid_guess = null;
-		DATA.grid_location = null;
-		updateStreak(0);
-		return;
-	}
-
-	DATA.last_guess = guess;
-	let location = [responseGeoGuessr.rounds[guess_counter-1].lat,responseGeoGuessr.rounds[guess_counter-1].lng];
-
-	DATA.grid_guess = getGridLoc(guess[0], guess[1]);
-	DATA.grid_location = getGridLoc(location[0], location[1]);
-
-	if(DATA.grid_guess === DATA.grid_location) {
-		updateStreak(DATA.streak + 1);
-	}else{
-		updateStreak(0);
-	}
-}
-
-const checkStreakIsLatest = () => {
-	let data = JSON.parse(window.localStorage.getItem('geoQuadStreak'));
-
-	if(data) {
-		DATA.streak = data.streak;
-	}
-}
-
-const updateStreak = (streak) => {
-	checkStreakIsLatest();
-
-	DATA.previous_streak = DATA.streak;
-	DATA.streak = streak;
-
-	if(DATA.streak !== 0) {
-		DATA.streak_backup = DATA.streak;
-	}
-
-	save();
-	updateStreakPanels();
-}
-
-const updateStreakPanels = () => {
-	updateRoundPanel();
-	updateSummaryPanel();
-}
-
-document.addEventListener('keypress', (e) => {
-	switch(e.key) {
-		case '1':
-			updateStreak(DATA.streak + 1);
-			break;
-		case '2':
-			updateStreak(DATA.streak - 1);
-			break;
-		case '8':
-			updateStreak(DATA.streak_backup + 1);
-			break;
-		case '0':
-			DATA.streak_backup = 0;
-			updateStreak(0);
-			break;
-	};
-});
-
-const checkState = () => {
-	const gameLayout = document.querySelector('.game-layout');
-	const resultLayout = document.querySelector('div[class^="result-layout_root"]');
-	const finalScoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="result-overlay_overlayContent__"]');
-
-	if(gameLayout) {
-		if (DATA.round !== getCurrentRound() || DATA.gameId !== getGameId()) {
-			if(DATA.round_started) {
-				stopRound();
-			}
-
-			startRound();
-		}else if(resultLayout && DATA.round_started) {
-			stopRound();
-		}else if(finalScoreLayout && !DATA.game_finished) {
-			DATA.game_finished = true;
-			updateStreakPanels();
-		}
-	}
-}
-
-const init = () => {
-	load();
-
-	const observer = new MutationObserver(() => {
-		checkState();
-	});
-
-	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
-
-	window.addEventListener('mouseup', checkState);
-}
-
-window.onload = updateStreakPanels;
-init();
