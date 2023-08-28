@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         GeoGuessr Hedge Streak
-// @description  Adds an hedge streak counter
+// @description  Adds a hedge streak counter that automatically updates while you play and tracks how many games in a row you score 20,000 points or more
 // @version      1.0
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
