@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Hedge Streak
 // @description  Adds a hedge streak counter that automatically updates while you play and tracks how many games in a row you score 20,000 points or more
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -42,7 +42,7 @@ function quadMatch(state, guess, location) {
 	return {
 		player_guess_name: null,
 		actual_location_name: null,
-		match: state.total_score >= SCORE_THRESHOLD
+		match: state.total_score.amount >= SCORE_THRESHOLD
 	}
 }
 

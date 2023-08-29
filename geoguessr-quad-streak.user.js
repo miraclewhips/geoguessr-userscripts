@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Quad Streak
 // @description  Draws a grid over the minimap, and tracks how many correct quads you guess in a row
-// @version      1.4
+// @version      1.5
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -11,7 +11,7 @@
 // @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
-// @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-quad-streak.user.js
+// @downloadURL  https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-quad-streak.user.js
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-quad-streak.user.js
 // ==/UserScript==
 
@@ -61,7 +61,7 @@ function getGridLoc(pos) {
 	return gridNumber(x, y);
 }
 
-function createGrid(MWMapInstance) {
+function createGrid(mapInstance) {
 	class MapGrid extends google.maps.OverlayView {
 		divs = [];
 	
@@ -213,10 +213,56 @@ function createGrid(MWMapInstance) {
 	}
 
 	let MWMapGrid = new MapGrid();
-	MWMapGrid.setMap(MWMapInstance);
+	MWMapGrid.setMap(mapInstance);
 }
 
-var __awaiter=this&&this.__awaiter||function(l,_,i,r){function h(a){return a instanceof i?a:new i(function(d){d(a)})}return new(i||(i=Promise))(function(a,d){function m(o){try{c(r.next(o))}catch(g){d(g)}}function f(o){try{c(r.throw(o))}catch(g){d(g)}}function c(o){o.done?a(o.value):h(o.value).then(m,f)}c((r=r.apply(l,_||[])).next())})},GeoGuessrEventFramework;(function(){let l,_,i,r,h;function a(n){return new Promise(t=>setTimeout(t,n))}function d(n,t,e){const s=n.onload;n.onload=u=>{const p=window.google;p&&(t.disconnect(),e(p)),s&&s.call(n,u)}}function m(n){for(const t of n)for(const e of t.addedNodes){const s=e;if(s&&s.src&&s.src.startsWith("https://maps.googleapis.com/"))return s}return null}function f(n){new MutationObserver((t,e)=>{const s=m(t);s&&d(s,e,n)}).observe(document.documentElement,{childList:!0,subtree:!0})}function c(){const n=l.getPosition();return n?{lat:n.lat(),lng:n.lng()}:{lat:null,lng:null}}function o(){return __awaiter(this,void 0,void 0,function*(){return yield i,l?(yield a(100),new Promise(n=>{if(r){let t=window.google.maps.event.addListener(l,"status_changed",()=>{const e=c();r.lat!=e.lat&&r.lng!=e.lng&&(window.google.maps.event.removeListener(t),r=e,n(e))})}else{const t=c();r=t,n(t)}})):{lat:null,lng:null}})}i=new Promise((n,t)=>{document.addEventListener("DOMContentLoaded",()=>{f(()=>{if(!window.google)return t();const e=[];e.push(new Promise(s=>{window.google.maps.StreetViewPanorama=class extends window.google.maps.StreetViewPanorama{constructor(...u){super(...u),l=this,s()}}})),e.push(new Promise(s=>{window.google.maps.Map=class extends window.google.maps.Map{constructor(...u){super(...u),_=this,createGrid(this),s()}}})),Promise.all(e).then(()=>n())})})});class g{constructor(){this.events=new EventTarget,this.state=this.defaultState(),this.init(),this.loadState();let t=document.querySelector("#__next");if(!t)return;new MutationObserver(this.checkState.bind(this)).observe(t,{subtree:!0,childList:!0}),i.then(()=>{_.addListener("click",s=>{!this.state.current_round||!this.state.round_in_progress||(this.state.rounds[this.state.current_round-1].player_guess={lat:s.latLng.lat(),lng:s.latLng.lng()})})})}init(){return __awaiter(this,void 0,void 0,function*(){return this.loadedPromise||(this.loadedPromise=Promise.resolve(this)),this.loadedPromise})}defaultState(){return{current_game_id:"",is_challenge_link:!1,current_round:0,round_in_progress:!1,game_in_progress:!0,total_score:0,rounds:[]}}loadState(){let t=window.localStorage.getItem("GeoGuessrEventFramework_STATE");if(!t)return;let e=JSON.parse(t);t&&(e.current_round=0,e.round_in_progress=!1,e.game_in_progress=!0,Object.assign(this.state,this.defaultState(),e),this.saveState())}saveState(){window.localStorage.setItem("GeoGuessrEventFramework_STATE",JSON.stringify(this.state))}getCurrentRound(){const t=document.querySelector('div[class^="status_inner__"]>div[data-qa="round-number"]'),e=t?.children[1].textContent;return e?parseInt(e.split(/\//gi)[0].trim()):0}getGameMode(){if(location.pathname.startsWith("/game/"))return"game";if(location.pathname.startsWith("/challenge/"))return"challenge"}getGameId(){return window.location.href.substring(window.location.href.lastIndexOf("/")+1)}startRound(){return __awaiter(this,void 0,void 0,function*(){this.getGameMode()&&(this.state.current_game_id!==this.getGameId()&&(this.state=this.defaultState()),this.state.current_round=this.getCurrentRound(),this.state.round_in_progress=!0,this.state.game_in_progress=!0,this.state.current_game_id=this.getGameId(),this.state.is_challenge_link=this.getGameMode()=="challenge",this.state.current_round&&(this.state.rounds[this.state.current_round-1]={score:0,location:{lat:null,lng:null},player_guess:{lat:null,lng:null}}),this.saveState(),this.state.current_round===1&&this.events.dispatchEvent(new CustomEvent("game_start",{detail:this.state})),this.events.dispatchEvent(new CustomEvent("round_start",{detail:this.state})),o().then(t=>{h=t}))})}stopRound(){var t;return __awaiter(this,void 0,void 0,function*(){this.state.round_in_progress=!1,yield a(1);const e=(t=document.querySelector('div[class^="round-result_pointsIndicatorWrapper__"] div[class^="shadow-text_root__"]'))===null||t===void 0?void 0:t.textContent;if(e){const s=parseInt(e.replace(/[^\d]/g,""));!isNaN(s)&&this.state.current_round&&(this.state.rounds[this.state.current_round-1].score=s)}this.state.total_score=this.state.rounds.reduce((s,u)=>s+=u.score,0),this.state.current_round&&h&&(this.state.rounds[this.state.current_round-1].location=h),this.saveState(),this.events.dispatchEvent(new CustomEvent("round_end",{detail:this.state})),this.state.current_round===5&&this.events.dispatchEvent(new CustomEvent("game_end",{detail:this.state}))})}checkState(){const t=document.querySelector(".game-layout"),e=document.querySelector('div[class^="round-result_wrapper__"]'),s=document.querySelector('div[class^="result-layout_root__"] div[class^="result-overlay_overlayContent__"]');t&&(this.state.current_round!==this.getCurrentRound()||this.state.current_game_id!==this.getGameId()?(this.state.round_in_progress&&this.stopRound(),this.startRound()):e&&this.state.round_in_progress?this.stopRound():s&&this.state.game_in_progress&&(this.state.game_in_progress=!1))}}GeoGuessrEventFramework=new g,console.log("GeoGuessr Event Framework initialised: https://github.com/miraclewhips/geoguessr-event-framework")})();
+function overrideOnLoad(googleScript, observer, overrider) {
+	const oldOnload = googleScript.onload;
+	googleScript.onload = (event) => {
+		const google = window['google'];
+		if (google) {
+			observer.disconnect();
+			overrider(google);
+		}
+		if (oldOnload) {
+			oldOnload.call(googleScript, event);
+		}
+	}
+}
+
+function grabGoogleScript(mutations) {
+	for (const mutation of mutations) {
+		for (const newNode of mutation.addedNodes) {
+			const asScript = newNode;
+			if (asScript && asScript.src && asScript.src.startsWith('https://maps.googleapis.com/')) {
+				return asScript;
+			}
+		}
+	}
+	return null;
+}
+
+function injecter(overrider) {
+	new MutationObserver((mutations, observer) => {
+		const googleScript = grabGoogleScript(mutations);
+		if (googleScript) {
+			overrideOnLoad(googleScript, observer, overrider);
+		}
+	}).observe(document.documentElement, { childList: true, subtree: true });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	injecter(() => {
+		if(!window['google']) return reject();
+
+		window['google'].maps.Map = class extends window['google'].maps.Map {
+			constructor(...args) {
+				super(...args);
+				createGrid(this);
+			}
+		}
+	});
+});
 
 function quadMatch(state, guess, location) {
 	const guessQuad = getGridLoc(guess);
