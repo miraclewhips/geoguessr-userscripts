@@ -18,7 +18,7 @@ Click on the polygon once you have created it and add a new field with `name` on
 
 ### Step 3
 
-Click the button in the top right to copy the JSON code to your clipboard.
+Click the button in the top right to copy the GeoJSON code to your clipboard.
 
 ![](https://i.imgur.com/6c655Jl.jpg)
 
