@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         GeoGuessr Hedge Streak
 // @description  Adds a hedge streak counter that automatically updates while you play and tracks how many games in a row you score 20,000 points or more
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        none
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=1
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=1
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=2
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=2
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // @downloadURL  https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-hedge-streak.user.js
