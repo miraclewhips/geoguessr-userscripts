@@ -250,7 +250,7 @@ async function mmaFetch(url, options = {}) {
 			}
 		} catch {
 		}
-		alert("An error occurred while trying to connect to Map Making App. Please check your API key is valid.");
+		alert(`An error occurred while trying to connect to Map Making App. ${message}`);
 		throw Object.assign(new Error(message), { response });
 	}
 	return response;
@@ -441,11 +441,17 @@ async function clickedMapButton(e) {
 
 	if(!MAP_LIST) {
 		showLoader();
-		MAP_LIST = await getMaps();
+
+		try {
+			MAP_LIST = await getMaps();
+		}catch{}
+
 		hideLoader();
 	}
 
-	showMapList()
+	if(MAP_LIST) {
+		showMapList()
+	}
 }
 
 function showMapList() {
