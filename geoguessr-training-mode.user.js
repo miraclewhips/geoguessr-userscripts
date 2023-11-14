@@ -16,14 +16,14 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-training-mode.user.js
 // ==/UserScript==
 
-/*
+
+/* ----- API KEY INSTRUCTIONS -----
+
 Requires an API key from Map Making App in order to save locations.
 Create one here: https://map-making.app/keys
 Make sure not to share this key with anybody or show it publically as it will allow anybody to edit your maps.
-*/
 
-// Replace `PASTE_YOUR_KEY_HERE` with your generated API key
-// (make sure not to delete the quotes surrounding the key)
+Replace `PASTE_YOUR_KEY_HERE` with your generated API key (make sure not to delete the quotes surrounding the key) */
 const MAP_MAKING_API_KEY = "PASTE_YOUR_KEY_HERE";
 
 
