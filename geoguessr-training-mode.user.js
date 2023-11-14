@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -127,9 +127,26 @@ body.mwgtm-compass-hidden .mwgtm-compass {
 }
 
 .mwgtm-title {
-	font-size: 12px;
+	font-size: 15px;
 	font-weight: bold;
 	text-shadow: rgb(204, 48, 46) 2px 0px 0px, rgb(204, 48, 46) 1.75517px 0.958851px 0px, rgb(204, 48, 46) 1.0806px 1.68294px 0px, rgb(204, 48, 46) 0.141474px 1.99499px 0px, rgb(204, 48, 46) -0.832294px 1.81859px 0px, rgb(204, 48, 46) -1.60229px 1.19694px 0px, rgb(204, 48, 46) -1.97998px 0.28224px 0px, rgb(204, 48, 46) -1.87291px -0.701566px 0px, rgb(204, 48, 46) -1.30729px -1.5136px 0px, rgb(204, 48, 46) -0.421592px -1.95506px 0px, rgb(204, 48, 46) 0.567324px -1.91785px 0px, rgb(204, 48, 46) 1.41734px -1.41108px 0px, rgb(204, 48, 46) 1.92034px -0.558831px 0px;
+	position: relative;
+	z-index: 1;
+}
+
+.mwgtm-subtitle {
+	font-size: 12px;
+	background: rgba(204, 48, 46, 0.4);
+	padding: 3px 5px;
+	border-radius: 5px;
+	position: relative;
+	z-index: 0;
+	top: -8px;
+	text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.mwgtm-subtitle a:hover {
+	text-decoration: underline;
 }
 
 .mwgtm-settings-option {
@@ -138,7 +155,7 @@ body.mwgtm-compass-hidden .mwgtm-compass {
 	border-radius: 5px;
 	font-size: 12px;
 	cursor: pointer;
-	opacity: 0.6;
+	opacity: 0.75;
 	transition: opacity 0.2s;
 }
 
@@ -323,7 +340,8 @@ function defaultState() {
 	return {
 		compassHidden: false,
 		terrainEnabled: false,
-		carSetting: 0
+		carSetting: 0,
+		coverageEnabled: false
 	}
 }
 
@@ -414,10 +432,12 @@ function addSettingsButtonsToRound() {
 	element.className = 'mwgtm-settings extra-pad';
 	element.innerHTML = `
 		<div class="mwgtm-title">TRAINING MODE</div>
+		<div class="mwgtm-subtitle">by <a href="https://miraclewhips.dev/" target="_blank" rel="noopener noreferrer">miraclewhips</a>. <a href="https://ko-fi.com/miraclewhips" target="_blank" rel="noopener noreferrer">Support my work</a>.</div>
 		${faceNorthBtn}
 		<div class="mwgtm-settings-option" id="mwgtm-opt-compass-toggle">COMPASS VISIBLE - [ H ]</div>
 		<div class="mwgtm-settings-option" id="mwgtm-opt-terrain">TERRAIN DISABLED - [ T ]</div>
 		<div class="mwgtm-settings-option" id="mwgtm-opt-car">CAR VISIBLE - [ M ]</div>
+		<div class="mwgtm-settings-option" id="mwgtm-opt-coverage">COVERAGE HIDDEN - [ B ]</div>
 	`;
 
 	container.appendChild(element);
@@ -444,9 +464,14 @@ function createSettingsButtonEvents() {
 		toggleCar();
 	});
 
+	document.getElementById('mwgtm-opt-coverage').addEventListener('click', () => {
+		toggleCoverage();
+	});
+
 	toggleCompass(MWGTM_STATE.compassHidden);
 	toggleTerrain(MWGTM_STATE.terrainEnabled);
 	toggleCar(MWGTM_STATE.carSetting);
+	toggleCoverage(MWGTM_STATE.coverageEnabled);
 }
 
 function lookNorth() {
@@ -460,6 +485,7 @@ function lookNorth() {
 		MWGTM_SV.setPov(pov);
 	}
 }
+
 function toggleCompass(hidden) {
 	if(!document.getElementById('mwgtm-opt-compass-toggle')) return;
 
@@ -473,6 +499,7 @@ function toggleCompass(hidden) {
 	MWGTM_STATE.compassHidden = hidden;
 	saveState();
 }
+
 function toggleTerrain(enabled) {
 	if(!document.getElementById('mwgtm-opt-terrain')) return;
 
@@ -481,6 +508,10 @@ function toggleTerrain(enabled) {
 	}
 	
 	document.getElementById('mwgtm-opt-terrain').textContent = enabled ? 'TERRAIN ENABLED - [ T ]' : 'TERRAIN DISABLED - [ T ]';
+
+	if(document.getElementById('mwgtm-opt-terrain-summary')) {
+		document.getElementById('mwgtm-opt-terrain-summary').textContent = enabled ? 'TERRAIN ENABLED - [ T ]' : 'TERRAIN DISABLED - [ T ]';
+	}
 	
 	if(MWGTM_M) {
 		MWGTM_M.setMapTypeId(enabled ? 'terrain' : 'roadmap');
@@ -513,6 +544,27 @@ function toggleCar(setting) {
 	}else{
 		hideCarWarning();
 	}
+}
+
+function toggleCoverage(enabled) {
+	if(!document.getElementById('mwgtm-opt-coverage')) return;
+
+	if(typeof enabled === 'undefined') {
+		enabled = !MWGTM_STATE.coverageEnabled;
+	}
+	
+	document.getElementById('mwgtm-opt-coverage').textContent = enabled ? 'COVERAGE VISIBLE - [ B ]' : 'COVERAGE HIDDEN - [ B ]';
+
+	if(document.getElementById('mwgtm-opt-coverage-summary')) {
+		document.getElementById('mwgtm-opt-coverage-summary').textContent = enabled ? 'COVERAGE VISIBLE - [ B ]' : 'COVERAGE HIDDEN - [ B ]';
+	}
+	
+	if(MWGTM_SVC && MWGTM_M) {
+		MWGTM_SVC.setMap(enabled ? MWGTM_M : null);
+	}
+	
+	MWGTM_STATE.coverageEnabled = enabled;
+	saveState();
 }
 
 function showCarWarning() {
@@ -660,8 +712,11 @@ function addSettingsButtonsToSummary() {
 	element.className = 'mwgtm-settings';
 	element.innerHTML = `
 		<div class="mwgtm-title">TRAINING MODE</div>
+		<div class="mwgtm-subtitle">by <a href="https://miraclewhips.dev/" target="_blank" rel="noopener noreferrer">miraclewhips</a>. <a href="https://ko-fi.com/miraclewhips" target="_blank" rel="noopener noreferrer">Support my work</a>.</div>
 		<div class="mwgtm-settings-option" id="mwgtm-opt-save-loc">SAVE TO MAP</div>
 		<div class="mwgtm-settings-option" id="mwgtm-opt-open-maps">OPEN IN GOOGLE MAPS</div>
+		<div class="mwgtm-settings-option" id="mwgtm-opt-terrain-summary">TERRAIN DISABLED - [ T ]</div>
+		<div class="mwgtm-settings-option" id="mwgtm-opt-coverage-summary">COVERAGE HIDDEN - [ B ]</div>
 	`;
 
 	container.appendChild(element);
@@ -678,6 +733,14 @@ function createSettingsButtonSummaryEvents() {
 		const link = googleMapsLink(LOCATION);
 		GM_openInTab(link, false);
 	});
+
+	document.getElementById('mwgtm-opt-terrain-summary').addEventListener('click', () => {
+		toggleTerrain();
+	});
+
+	document.getElementById('mwgtm-opt-coverage-summary').addEventListener('click', () => {
+		toggleCoverage();
+	});
 }
 
 GeoGuessrEventFramework.init().then(GEF => {
@@ -691,6 +754,7 @@ GeoGuessrEventFramework.init().then(GEF => {
 			case 'KeyH': toggleCompass(); return;
 			case 'KeyT': toggleTerrain(); return;
 			case 'KeyM': toggleCar(); return;
+			case 'KeyB': toggleCoverage(); return;
 		}
 	})
 
@@ -723,7 +787,7 @@ const observer = new MutationObserver(() => {
 
 observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
 
-let MWGTM_SV, MWGTM_M;
+let MWGTM_SV, MWGTM_M, MWGTM_SVC;
 
 // Script injection, extracted from unityscript extracted from extenssr:
 // https://gitlab.com/nonreviad/extenssr/-/blob/main/src/injected_scripts/maps_api_injecter.ts
@@ -768,6 +832,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		const google = window['google'] || unsafeWindow['google'];
 		if(!google) return;
 
+		MWGTM_SVC = new google.maps.StreetViewCoverageLayer();
+
 		google.maps.StreetViewPanorama = class extends google.maps.StreetViewPanorama {
 			constructor(...args) {
 				super(...args);
@@ -787,6 +853,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			constructor(...args) {
 				super(...args);
 				MWGTM_M = this;
+
+				toggleCoverage(MWGTM_STATE.coverageEnabled);
 
 				MWGTM_M.addListener('idle', () => {
 					toggleTerrain(MWGTM_STATE.terrainEnabled);
