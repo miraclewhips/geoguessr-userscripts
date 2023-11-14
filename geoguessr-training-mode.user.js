@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=4
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=5
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @grant        GM_addStyle
@@ -39,9 +39,21 @@ const MAP_MAKING_API_KEY = "PASTE_YOUR_KEY_HERE";
 /* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
 /* ############################################################################### */
 
+const compassColors = {
+	n: '#fd8f8f',
+	ne: '#f8ce74',
+	e: '#feff84',
+	se: '#a3fa80',
+	s: '#8affe2',
+	sw: '#77aaf7',
+	w: '#bb6ff5',
+	nw: '#ffa1d6',
+}
+
 GM_addStyle(`
-body.mwgtm-compass-hidden button[class^="compass_compass__"],
-body.mwgtm-compass-hidden div[class^="panorama-compass_compassContainer__"]{
+button[class^="compass_compass__"],
+body.mwgtm-compass-hidden div[class^="panorama-compass_compassContainer__"] ,
+body.mwgtm-compass-hidden .mwgtm-compass {
 	display: none !important;
 }
 
@@ -201,6 +213,109 @@ body.mwgtm-compass-hidden div[class^="panorama-compass_compassContainer__"]{
 	border-radius: 5px;
 	font-size: 13px;
 	font-weight: bold;
+}
+
+div[class^="panorama-compass_compassContainer__"] {
+	background-color: var(--ds-color-black-80);
+}
+
+/* NW */
+div[class^="panorama-compass_latitude___"]:nth-of-type(1) span[class^="panorama-compass_latitudeLabel__"] {
+	color: ${compassColors.nw};
+}
+div[class^="panorama-compass_latitude___"]:nth-of-type(1) span[class^="panorama-compass_latitudeLines__"] {
+	background-color: ${compassColors.nw};
+}
+
+/* N */
+div[class^="panorama-compass_latitude___"]:nth-of-type(2) span[class^="panorama-compass_latitudeLabel__"] {
+	color: ${compassColors.n};
+}
+div[class^="panorama-compass_latitude___"]:nth-of-type(2) span[class^="panorama-compass_latitudeLines__"] {
+	background-color: ${compassColors.n};
+}
+
+/* NE */
+div[class^="panorama-compass_latitude___"]:nth-of-type(3) span[class^="panorama-compass_latitudeLabel__"] {
+	color: ${compassColors.ne};
+}
+div[class^="panorama-compass_latitude___"]:nth-of-type(3) span[class^="panorama-compass_latitudeLines__"] {
+	background-color: ${compassColors.ne};
+}
+
+/* E */
+div[class^="panorama-compass_latitude___"]:nth-of-type(4) span[class^="panorama-compass_latitudeLabel__"] {
+	color: ${compassColors.e};
+}
+div[class^="panorama-compass_latitude___"]:nth-of-type(4) span[class^="panorama-compass_latitudeLines__"] {
+	background-color: ${compassColors.e};
+}
+
+/* SE */
+div[class^="panorama-compass_latitude___"]:nth-of-type(5) span[class^="panorama-compass_latitudeLabel__"] {
+	color: ${compassColors.se};
+}
+div[class^="panorama-compass_latitude___"]:nth-of-type(5) span[class^="panorama-compass_latitudeLines__"] {
+	background-color: ${compassColors.se};
+}
+
+/* S */
+div[class^="panorama-compass_latitude___"]:nth-of-type(6) span[class^="panorama-compass_latitudeLabel__"] {
+	color: ${compassColors.s};
+}
+div[class^="panorama-compass_latitude___"]:nth-of-type(6) span[class^="panorama-compass_latitudeLines__"] {
+	background-color: ${compassColors.s};
+}
+
+/* SW */
+div[class^="panorama-compass_latitude___"]:nth-of-type(7) span[class^="panorama-compass_latitudeLabel__"] {
+	color: ${compassColors.sw};
+}
+div[class^="panorama-compass_latitude___"]:nth-of-type(7) span[class^="panorama-compass_latitudeLines__"] {
+	background-color: ${compassColors.sw};
+}
+
+/* W */
+div[class^="panorama-compass_latitude___"]:nth-of-type(8) span[class^="panorama-compass_latitudeLabel__"] {
+	color: ${compassColors.w};
+}
+div[class^="panorama-compass_latitude___"]:nth-of-type(8) span[class^="panorama-compass_latitudeLines__"] {
+	background-color: ${compassColors.w};
+}
+
+aside[class^="game_controls___"] {
+	z-index: 9;
+}
+
+.mwgtm-compass {
+	background: transparent;
+	border: 0;
+	height: 3rem;
+	outline: none;
+	padding: 0;
+	position: absolute;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	width: 3rem;
+	left: 0;
+	bottom: 14rem;
+}
+
+.mwgtm-compass .circle {
+	border-radius: 100%;
+	box-shadow: inset 0 0 0 0.75rem var(--ds-color-white);
+	height: 100%;
+	opacity: .4;
+	width: 100%;
+}
+
+.mwgtm-compass .arrow {
+	height: 3rem;
+	left: calc(50% - 0.375rem);
+	position: absolute;
+	top: calc(50% - 1.5rem);
+	width: 0.75rem;
 }
 `);
 
@@ -592,6 +707,22 @@ GeoGuessrEventFramework.init().then(GEF => {
 	});
 });
 
+//styles_columnOne__rw8hK
+const observer = new MutationObserver(() => {
+	if(document.getElementById('mwgtm-restore-classic-compass')) return;
+
+	let container = document.querySelector('aside[class^="game_controls___"]');
+	if(container) {
+		let compass = document.createElement('div');
+		compass.id = 'mwgtm-restore-classic-compass';
+		compass.className = 'mwgtm-compass';
+		compass.innerHTML = `<div class="circle"></div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 96" class="arrow" id="mwgtm-compass-arrow"><g fill="none" fill-rule="evenodd"><path fill="#B82A2A" d="M12 0v48H0z"/><path fill="#CC2F30" d="M12 0v48h12z"/><path fill="#E6E6E6" d="M12 96V48H0z"/><path fill="#FFF" d="M12 96V48h12z"/></g></svg>`;
+		container.appendChild(compass);
+	}
+});
+
+observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+
 let MWGTM_SV, MWGTM_M;
 
 // Script injection, extracted from unityscript extracted from extenssr:
@@ -641,6 +772,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			constructor(...args) {
 				super(...args);
 				MWGTM_SV = this;
+
+				MWGTM_SV.addListener('pov_changed', () => {
+					const arrow = document.getElementById('mwgtm-compass-arrow');
+					if(!arrow) return;
+
+					const heading = MWGTM_SV.getPov().heading;
+					arrow.style.transform = `rotate(${-heading}deg)`;
+				});
 			}
 		}
 		
@@ -649,7 +788,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				super(...args);
 				MWGTM_M = this;
 
-				let listener = MWGTM_M.addListener('idle', () => {
+				MWGTM_M.addListener('idle', () => {
 					toggleTerrain(MWGTM_STATE.terrainEnabled);
 				});
 			}
