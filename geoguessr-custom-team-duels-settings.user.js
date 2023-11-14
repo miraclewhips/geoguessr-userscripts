@@ -8,7 +8,7 @@
 // @grant        GM_addStyle
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
-// @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-custom-team-duels-settings.user.js
+// @downloadURL  https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-custom-team-duels-settings.user.js
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-custom-team-duels-settings.user.js
 // ==/UserScript==
 
