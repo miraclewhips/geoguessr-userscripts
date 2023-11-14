@@ -505,7 +505,7 @@ function addLocationToMap(e) {
 		heading: LOCATION.heading,
 		pitch: LOCATION.pitch,
 		zoom: LOCATION.zoom === 0 ? null : LOCATION.zoom,
-		tags: document.getElementById('mwgtm-map-tags').value.split(',').map(t => t.trim()),
+		tags: document.getElementById('mwgtm-map-tags').value.split(',').map(t => t.trim()).filter(t => t.length > 0),
 		flags: LOCATION.panoId ? 1 : 0
 	}]);
 }
