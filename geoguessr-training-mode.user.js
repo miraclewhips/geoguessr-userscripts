@@ -288,12 +288,17 @@ function addSettingsButtonsToRound() {
 
 	if(!container || document.getElementById('mwgtm-settings-buttons')) return;
 
+	let faceNorthBtn = '';
+	if(!JSON.parse(window.localStorage.getItem('game-settings')).forbidRotating) {
+		faceNorthBtn = `<div class="mwgtm-settings-option" id="mwgtm-opt-compass-north">FACE NORTH - [ N ]</div>`;
+	}
+
 	const element = document.createElement('div');
 	element.id = 'mwgtm-settings-buttons';
 	element.className = 'mwgtm-settings extra-pad';
 	element.innerHTML = `
 		<div class="mwgtm-title">TRAINING MODE</div>
-		<div class="mwgtm-settings-option" id="mwgtm-opt-compass-north">FACE NORTH - [ N ]</div>
+		${faceNorthBtn}
 		<div class="mwgtm-settings-option" id="mwgtm-opt-compass-toggle">COMPASS VISIBLE - [ H ]</div>
 		<div class="mwgtm-settings-option" id="mwgtm-opt-terrain">TERRAIN DISABLED - [ T ]</div>
 		<div class="mwgtm-settings-option" id="mwgtm-opt-car">CAR VISIBLE - [ M ]</div>
@@ -305,9 +310,11 @@ function addSettingsButtonsToRound() {
 }
 
 function createSettingsButtonEvents() {
-	document.getElementById('mwgtm-opt-compass-north').addEventListener('click', () => {
-		lookNorth();
-	});
+	if(document.getElementById('mwgtm-opt-compass-north')) {
+		document.getElementById('mwgtm-opt-compass-north').addEventListener('click', () => {
+			lookNorth();
+		});
+	}
 
 	document.getElementById('mwgtm-opt-compass-toggle').addEventListener('click', () => {
 		toggleCompass();
