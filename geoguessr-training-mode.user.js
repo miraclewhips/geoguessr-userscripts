@@ -584,7 +584,7 @@ GeoGuessrEventFramework.init().then(GEF => {
 	});
 
 	GEF.events.addEventListener('round_end', (state) => {
-		const loc = state.detail.rounds[state.detail.rounds.length - 1].location;
+		const loc = state.detail.rounds[state.detail.rounds.length - 1]?.location;
 		if(!loc) return;
 
 		LOCATION = loc;
