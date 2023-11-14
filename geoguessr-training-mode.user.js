@@ -250,6 +250,7 @@ async function mmaFetch(url, options = {}) {
 			}
 		} catch {
 		}
+		alert("An error occurred while trying to connect to Map Making App. Please check your API key is valid.");
 		throw Object.assign(new Error(message), { response });
 	}
 	return response;
