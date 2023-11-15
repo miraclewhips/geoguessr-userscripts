@@ -665,6 +665,7 @@ function showMapList() {
 	document.getElementById('mwgtm-map-tags').addEventListener('keyup', e => e.stopPropagation());
 	document.getElementById('mwgtm-map-tags').addEventListener('keydown', e => e.stopPropagation());
 	document.getElementById('mwgtm-map-tags').addEventListener('keypress', e => e.stopPropagation());
+	document.getElementById('mwgtm-map-tags').focus();
 
 	for(let map of element.querySelectorAll('.maps .map-add')) {
 		map.addEventListener('click', addLocationToMap);
