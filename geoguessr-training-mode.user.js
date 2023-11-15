@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -187,7 +187,7 @@ body.mwgtm-compass-hidden .mwgtm-compass {
 }
 
 #mwgtm-map-list .maps {
-	max-height: 300px;
+	max-height: 200px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	font-size: 15px;
@@ -341,7 +341,8 @@ function defaultState() {
 		compassHidden: false,
 		terrainEnabled: false,
 		carSetting: 0,
-		coverageEnabled: false
+		coverageEnabled: false,
+		recentMaps: []
 	}
 }
 
@@ -628,6 +629,31 @@ function showMapList() {
 	element.id = 'mwgtm-map-list';
 	element.className = 'mwgtm-modal';
 
+	let recentMapsSection = ``;
+	if(MWGTM_STATE.recentMaps.length > 0) {
+		let recentMapsHTML = '';
+		for(let m of MWGTM_STATE.recentMaps) {
+			if(m.archivedAt) continue;
+			recentMapsHTML += `<div class="map">
+				<span class="map-name">${m.name}</span>
+				<span class="map-buttons">
+					<span class="map-add" data-id="${m.id}">ADD</span>
+					<span class="map-added">ADDED</span>
+				</span>
+			</div>`;
+		}
+
+		recentMapsSection = `
+			<h3>Recent Maps</h3>
+
+			<div class="maps">
+				${recentMapsHTML}
+			</div>
+
+			<br>
+		`;
+	}
+
 	let mapsHTML = '';
 	for(let m of MAP_LIST) {
 		if(m.archivedAt) continue;
@@ -648,7 +674,9 @@ function showMapList() {
 
 			<br><br>
 
-			<h3>Maps</h3>
+			${recentMapsSection}
+
+			<h3>All Maps</h3>
 		
 			<div class="maps">
 				${mapsHTML}
@@ -680,7 +708,17 @@ function closeMapList(e) {
 function addLocationToMap(e) {
 	e.target.parentNode.classList.add('is-added');
 
-	importLocations(e.target.dataset.id, [{
+	const id = parseInt(e.target.dataset.id);
+	MWGTM_STATE.recentMaps = MWGTM_STATE.recentMaps.filter(e => e.id !== id).slice(0, 2);
+	for(let map of MAP_LIST) {
+		if(map.id === id) {
+			MWGTM_STATE.recentMaps.unshift(map);
+			break;
+		}
+	}
+	saveState();
+
+	importLocations(id, [{
 		id: -1,
 		location: {lat: LOCATION.lat, lng: LOCATION.lng},
 		panoId: LOCATION.panoId ?? null,
