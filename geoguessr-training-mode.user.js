@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.4
+// @version      1.5
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -875,13 +875,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		const google = window['google'] || unsafeWindow['google'];
 		if(!google) return;
 
-		MWGTM_SVC = new google.maps.ImageMapType({
-			getTileUrl: (point, zoom) => `https://www.google.com/maps/vt?pb=!1m7!8m6!1m3!1i${zoom}!2i${point.x}!3i${point.y}!2i9!3x1!2m8!1e2!2ssvv!4m2!1scc!2s*211m3*211e2*212b1*213e2*212b1*214b1!4m2!1ssvl!2s*211b0*212b1!3m8!2sen!3sus!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m4!1e0!8m2!1e1!1e1!6m6!1e12!2i2!11e0!39b0!44e0!50e`,
-			tileSize: new google.maps.Size(256, 256),
-			maxZoom: 9,
-			minZoom: 0,
-		});
-
 		google.maps.StreetViewPanorama = class extends google.maps.StreetViewPanorama {
 			constructor(...args) {
 				super(...args);
@@ -901,7 +894,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			constructor(...args) {
 				super(...args);
 				MWGTM_M = this;
-				this.mapTypes.set('sv', MWGTM_SVC);
+
+				MWGTM_SVC = new google.maps.ImageMapType({
+					getTileUrl: (point, zoom) => `https://www.google.com/maps/vt?pb=!1m7!8m6!1m3!1i${zoom}!2i${point.x}!3i${point.y}!2i9!3x1!2m8!1e2!2ssvv!4m2!1scc!2s*211m3*211e2*212b1*213e2*212b1*214b1!4m2!1ssvl!2s*211b0*212b1!3m8!2sen!3sus!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m4!1e0!8m2!1e1!1e1!6m6!1e12!2i2!11e0!39b0!44e0!50e`,
+					tileSize: new google.maps.Size(256, 256),
+					maxZoom: 9,
+					minZoom: 0,
+				});
 
 				toggleCoverage(MWGTM_STATE.coverageEnabled);
 
