@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         GeoGuessr County Streak
 // @description  Adds a county streak counter that automatically updates while you play (may not work for all countries, depending on how they define their counties)
-// @version      1.8
+// @version      1.9
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
-// @grant        none
+// @grant        unsafeWindow
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=3
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=3
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=4
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=4
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // @downloadURL  https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-county-streak.user.js
