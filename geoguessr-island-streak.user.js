@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         GeoGuessr Island Streak
 // @description  Adds an island streak counter for certain countries (New Zealand, Indonesia)
-// @version      1.10
+// @version      1.11
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=4
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=4
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=5
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=5
 // @require      https://miraclewhips.dev/geoguessr-event-framework/utils/turf.min.js?v=2
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT

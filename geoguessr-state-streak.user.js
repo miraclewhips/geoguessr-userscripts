@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         GeoGuessr State Streak
 // @description  Adds a state/province/region streak counter that automatically updates while you play (may not work for all countries, depending on how they define their regions)
-// @version      1.20
+// @version      1.21
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=4
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=4
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=5
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=5
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // @downloadURL  https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-state-streak.user.js
