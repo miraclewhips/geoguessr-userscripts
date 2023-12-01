@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.6
+// @version      1.7
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -51,7 +51,7 @@ const compassColors = {
 }
 
 GM_addStyle(`
-button[class^="compass_compass__"],
+.mwgtm-override-classic-compass button[class^="compass_compass__"],
 body.mwgtm-compass-hidden div[class^="panorama-compass_compassContainer__"] ,
 body.mwgtm-compass-hidden .mwgtm-compass {
 	display: none !important;
@@ -825,6 +825,7 @@ const observer = new MutationObserver(() => {
 		compass.className = 'mwgtm-compass';
 		compass.innerHTML = `<div class="circle"></div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 96" class="arrow" id="mwgtm-compass-arrow"><g fill="none" fill-rule="evenodd"><path fill="#B82A2A" d="M12 0v48H0z"/><path fill="#CC2F30" d="M12 0v48h12z"/><path fill="#E6E6E6" d="M12 96V48H0z"/><path fill="#FFF" d="M12 96V48h12z"/></g></svg>`;
 		container.appendChild(compass);
+		container.classList.add('mwgtm-override-classic-compass');
 	}
 });
 
