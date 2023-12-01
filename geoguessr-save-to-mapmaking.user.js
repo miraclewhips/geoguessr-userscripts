@@ -435,7 +435,7 @@ function addSettingsButtonsToSummary() {
 	element.id = 'mwstmm-settings-buttons-summary';
 	element.className = 'mwstmm-settings';
 	element.innerHTML = `
-		<div class="mwstmm-title">TRAINING MODE</div>
+		<div class="mwstmm-title">SAVE TO MAP MAKING APP</div>
 		<div class="mwstmm-subtitle">by <a href="https://miraclewhips.dev/" target="_blank" rel="noopener noreferrer">miraclewhips</a>. <a href="https://ko-fi.com/miraclewhips" target="_blank" rel="noopener noreferrer">Support my work</a>.</div>
 		<div class="mwstmm-settings-option" id="mwstmm-opt-save-loc">SAVE TO MAP</div>
 		<div class="mwstmm-settings-option" id="mwstmm-opt-open-maps">OPEN IN GOOGLE MAPS</div>
@@ -458,7 +458,7 @@ function createSettingsButtonSummaryEvents() {
 }
 
 GeoGuessrEventFramework.init().then(GEF => {
-	console.log('GeoGuessr Training Mode initialised.');
+	console.log('GeoGuessr Save To Map Making App initialised.');
 
 	GEF.events.addEventListener('round_end', (state) => {
 		const loc = state.detail.rounds[state.detail.rounds.length - 1]?.location;
