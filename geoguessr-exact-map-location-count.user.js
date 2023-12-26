@@ -23,10 +23,10 @@ const init = () => {
 		if(!window.location.pathname.includes('/maps/')) return;
 
 		const mapId = window.location.pathname.split('/')[2];
+		if(!mapId) return;
 
-		let value = document.querySelector('div[class^="map-stats_mapStat__"]:nth-child(3) div[class^="map-stats_mapStatMetricValue__"]');
-
-		if(!value || value.id === 'mwemlc' || !mapId) return;
+		const value = document.querySelector('div[class^="map-stats_mapStat__"]:nth-child(3) div[class^="map-stats_mapStatMetricValue__"]');
+		if(!value || value.id === 'mwemlc') return;
 
 		value.id = 'mwemlc';
 
