@@ -20,9 +20,10 @@
 
 const init = () => {
 	const observer = new MutationObserver(async () => {
-		if(!window.location.pathname.includes('/maps/')) return;
+		const path = window.location.pathname;
+		if(!path.includes('/maps/')) return;
 
-		const mapId = window.location.pathname.split('/')[2];
+		const mapId = path.split('/')[2];
 		if(!mapId) return;
 
 		const value = document.querySelector('div[class^="map-stats_mapStat__"]:nth-child(3) div[class^="map-stats_mapStatMetricValue__"]');
