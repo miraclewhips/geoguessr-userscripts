@@ -33,8 +33,7 @@ const init = () => {
 
 		const apiRes = await window.fetch(`https://www.geoguessr.com/api/v3/search/map?q=${mapId}`);
 		const apiData = await apiRes.json();
-
-		if(!apiData) return;
+		if(!apiData || !apiData.length) return;
 
 		value.textContent = apiData[0]?.coordinateCount?.toLocaleString();
 	});
