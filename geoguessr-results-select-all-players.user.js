@@ -58,9 +58,6 @@ function init() {
 		const path = window.location.pathname;
 		if(!path.includes('/results/')) return;
 
-		const mapId = path.split('/')[2];
-		if(!mapId) return;
-
 		const table = document.querySelector('div[class^="results_table__"]');
 		if(!table || table.id === 'mwrsap') return;
 
