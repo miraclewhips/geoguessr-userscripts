@@ -19,20 +19,20 @@
 /* ############################################################################### */
 
 GM_addStyle (`
-#mwrsapb {
+.mwrsap-button {
 	border: 1px solid rgba(255,255,255,0.2);
 	display: inline-block;
 	padding: 5px 10px;
 	border-radius: 0.375rem;
 	cursor: pointer;
 }
-#mwrsapb:hover,
-#mwrsapb:active {
+.mwrsap-button:hover,
+.mwrsap-button:active {
 	border: 1px solid rgba(255,255,255,0.5);
 }
 `);
 
-function selectAll() {
+function select(enable) {
 	const table = document.getElementById('mwrsap');
 	if(!table) return;
 
@@ -40,9 +40,17 @@ function selectAll() {
 	if(rows.length <= 1) return;
 
 	for(let i = 1; i < rows.length; i++) {
-		if(rows[i].className.includes('results_selected___')) continue;
+		if(rows[i].className.includes('results_selected___') === enable) continue;
 		rows[i].click();
 	}
+}
+
+function selectAll() {
+	select(true);
+}
+
+function selectNone() {
+	select(false);
 }
 
 function init() {
@@ -61,11 +69,17 @@ function init() {
 		const cell = table.querySelector('div[class*="results_headerRow__"] > div:first-child');
 		if(!cell) return;
 
-		const btn = document.createElement('div');
-		btn.id = 'mwrsapb';
-		btn.textContent = 'SELECT ALL PLAYERS';
-		btn.addEventListener('click', selectAll);
-		cell.appendChild(btn);
+		const btnAll = document.createElement('div');
+		btnAll.className = 'mwrsap-button';
+		btnAll.textContent = 'SELECT ALL';
+		btnAll.addEventListener('click', selectAll);
+		cell.appendChild(btnAll);
+
+		const btnNone = document.createElement('div');
+		btnNone.className = 'mwrsap-button';
+		btnNone.textContent = 'DESELECT ALL';
+		btnNone.addEventListener('click', selectNone);
+		cell.appendChild(btnNone);
 	});
 
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
