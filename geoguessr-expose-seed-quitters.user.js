@@ -5,6 +5,7 @@
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
+// @grant        GM_addStyle
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @copyright    2024, miraclewhips (https://github.com/miraclewhips)
@@ -12,6 +13,12 @@
 // @downloadURL  https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-expose-seed-quitters.user.js
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-expose-seed-quitters.user.js
 // ==/UserScript==
+
+GM_addStyle(`
+	div[class^="results_table__"] div[class^="results_row__"] div[class^="results_column__"]:last-of-type {
+		grid-column-start: 7;
+	}
+`);
 
 const THE_WINDOW = unsafeWindow || window;
 const default_fetch = THE_WINDOW.fetch;
@@ -27,11 +34,6 @@ THE_WINDOW.fetch = (function () {
 				const diff = b.totalScore-a.totalScore;
 				if(diff != 0) return diff;
 				return a.game.player.totalTime-b.game.player.totalTime;
-			});
-
-			data.items.forEach((e) => {
-				if(e.game.player.guesses.length === e.game.roundCount) return;
-				e.game.player.guesses.push(...new Array(e.game.roundCount - e.game.player.guesses.length).fill({timedOut: true}));
 			});
 
 			result.json = () => data;
