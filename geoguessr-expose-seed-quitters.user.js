@@ -26,7 +26,7 @@ THE_WINDOW.fetch = (function () {
 			data.items.sort((a,b) => {
 				const diff = b.totalScore-a.totalScore;
 				if(diff != 0) return diff;
-				return b.game.player.totalTime-a.game.player.totalTime;
+				return a.game.player.totalTime-b.game.player.totalTime;
 			});
 
 			data.items.forEach((e) => {
