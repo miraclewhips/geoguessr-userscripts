@@ -18,8 +18,8 @@ const default_fetch = THE_WINDOW.fetch;
 THE_WINDOW.fetch = (function () {
 	return async function (...args) {
 		const url = args[0].toString();
-		if(url.includes(`geoguessr.com/api/v3/results/highscores/`) && url.includes(`&minRounds=`)) {
-			args[0] = url.replace(/&minRounds=(\d+)/, `&minRounds=1`);
+		if(url.includes(`geoguessr.com/api/v3/results/highscores/`) && url.includes(`&minRounds=5`)) {
+			args[0] = url.replace(`&minRounds=5`, `&minRounds=1`);
 			let result = await default_fetch.apply(THE_WINDOW, args);
 			const data = await result.clone().json();
 
