@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Correct Location Panning
 // @description  Opens GeoGuessr locations in Google Maps with the correct panning and coverage date when clicking the flag icon on the map
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -13,7 +13,7 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-correct-location-panning.user.js
 // ==/UserScript==
 
-let latestGame;
+let latestGame, latestDuel;
 
 const THE_WINDOW = unsafeWindow || window;
 const default_fetch = THE_WINDOW.fetch;
@@ -24,6 +24,14 @@ THE_WINDOW.fetch = (function () {
 			let result = await default_fetch.apply(THE_WINDOW, args);
 			latestGame = await result.clone().json();
 			return result;
+		}else if(document.location.pathname.startsWith(`/duels/`)) {
+			const token = document.location.pathname.split(`/duels/`)[1].split(`/`)[0];
+
+			if(url.includes(`/_next/data/`) && url.includes(`summary.json?token=${token}`)) {
+				let result = await default_fetch.apply(THE_WINDOW, args);
+				const data = await result.clone().json();
+				latestDuel = data?.pageProps?.game;
+			}
 		}
 
 		return default_fetch.apply(THE_WINDOW, args);
@@ -89,7 +97,7 @@ function clickedMarkerResults(e) {
 }
 
 function clickedMarkerDuels(e) {
-	const data = __NEXT_DATA__?.props?.pageProps?.game;
+	const data = __NEXT_DATA__?.props?.pageProps?.game || latestDuel;
 	if(!data) return;
 
 	const token = document.location.pathname.split(`/duels/`)[1].split(`/`)[0];
