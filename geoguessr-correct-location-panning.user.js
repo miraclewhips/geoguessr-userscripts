@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Correct Location Panning
 // @description  Opens GeoGuessr locations in Google Maps with the correct panning and coverage date when clicking the flag icon on the map
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -13,7 +13,7 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-correct-location-panning.user.js
 // ==/UserScript==
 
-let latestGame, latestDuel;
+let latestGame, latestDuel, latestResults;
 
 const THE_WINDOW = unsafeWindow || window;
 const default_fetch = THE_WINDOW.fetch;
@@ -24,6 +24,14 @@ THE_WINDOW.fetch = (function () {
 			let result = await default_fetch.apply(THE_WINDOW, args);
 			latestGame = await result.clone().json();
 			return result;
+		}else if(document.location.pathname.startsWith(`/results/`)) {
+			const token = document.location.pathname.split(`/results/`)[1].split(`/`)[0];
+
+			if(url.includes(`/_next/data/`) && url.includes(`${token}.json?token=${token}`)) {
+				let result = await default_fetch.apply(THE_WINDOW, args);
+				const data = await result.clone().json();
+				latestResults = data?.pageProps;
+			}
 		}else if(document.location.pathname.startsWith(`/duels/`)) {
 			const token = document.location.pathname.split(`/duels/`)[1].split(`/`)[0];
 
@@ -84,8 +92,18 @@ function clickedMarkerGame(e) {
 	clickedMarker(e, latestGame);
 }
 
+function clickedMarkerChallenge(e) {
+	const data = latestGame || __NEXT_DATA__?.props?.pageProps?.gameSnapshot;
+	if(!data) return;
+
+	const token = document.location.pathname.split(`/challenge/`)[1].split(`/`)[0];
+	if(token !== latestGame?.token && token !== __NEXT_DATA__?.props?.pageProps?.token) return;
+
+	clickedMarker(e, data);
+}
+
 function clickedMarkerResults(e) {
-	const props = __NEXT_DATA__?.props?.pageProps;
+	const props = latestResults || __NEXT_DATA__?.props?.pageProps;
 	if(!props) return;
 
 	const data = props.gamePlayedByCurrentUser;
@@ -124,6 +142,8 @@ const init = () => {
 
 			if(document.location.pathname.startsWith(`/game/`)) {
 				marker.addEventListener(`click`, clickedMarkerGame);
+			}else if(document.location.pathname.startsWith(`/challenge/`)) {
+				marker.addEventListener(`click`, clickedMarkerChallenge);
 			}else if(document.location.pathname.startsWith(`/results/`)) {
 				marker.addEventListener(`click`, clickedMarkerResults);
 			}else if(document.location.pathname.startsWith(`/duels/`)) {
