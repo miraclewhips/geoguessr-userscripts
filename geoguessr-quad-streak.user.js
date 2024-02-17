@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Quad Streak
 // @description  Draws a grid over the minimap, and tracks how many correct quads you guess in a row
-// @version      1.12
+// @version      1.13
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -43,6 +43,7 @@ const KEYBOARD_SHORTCUTS = {
 /* ############################################################################### */
 /* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
 /* ############################################################################### */
+const QUAD_WINDOW = unsafeWindow ?? window;
 
 function toLetters(num) {
 	var mod = num % 26,
@@ -219,7 +220,7 @@ function createGrid(mapInstance) {
 function overrideOnLoad(googleScript, observer, overrider) {
 	const oldOnload = googleScript.onload;
 	googleScript.onload = (event) => {
-		const google = window['google'];
+		const google = QUAD_WINDOW['google'];
 		if (google) {
 			observer.disconnect();
 			overrider(google);
@@ -253,9 +254,9 @@ function injecter(overrider) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	injecter(() => {
-		if(!window['google']) return reject();
+		if(!QUAD_WINDOW['google']) return reject();
 
-		window['google'].maps.Map = class extends window['google'].maps.Map {
+		QUAD_WINDOW['google'].maps.Map = class extends QUAD_WINDOW['google'].maps.Map {
 			constructor(...args) {
 				super(...args);
 				createGrid(this);
