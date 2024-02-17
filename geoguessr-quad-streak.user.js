@@ -43,7 +43,7 @@ const KEYBOARD_SHORTCUTS = {
 /* ############################################################################### */
 /* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
 /* ############################################################################### */
-const QUAD_WINDOW = unsafeWindow ?? window;
+const CUSTOM_WINDOW = unsafeWindow ?? window;
 
 function toLetters(num) {
 	var mod = num % 26,
@@ -220,7 +220,7 @@ function createGrid(mapInstance) {
 function overrideOnLoad(googleScript, observer, overrider) {
 	const oldOnload = googleScript.onload;
 	googleScript.onload = (event) => {
-		const google = QUAD_WINDOW['google'];
+		const google = CUSTOM_WINDOW['google'];
 		if (google) {
 			observer.disconnect();
 			overrider(google);
@@ -254,9 +254,9 @@ function injecter(overrider) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	injecter(() => {
-		if(!QUAD_WINDOW['google']) return reject();
+		if(!CUSTOM_WINDOW['google']) return reject();
 
-		QUAD_WINDOW['google'].maps.Map = class extends QUAD_WINDOW['google'].maps.Map {
+		CUSTOM_WINDOW['google'].maps.Map = class extends CUSTOM_WINDOW['google'].maps.Map {
 			constructor(...args) {
 				super(...args);
 				createGrid(this);
