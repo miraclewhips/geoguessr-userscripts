@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Post-War Europe Country Streak
 // @description  Adds a country streak counter that uses European country borders from the post-war era, prior to the collapse of the Soviet Union
-// @version      1.5
+// @version      1.6
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
