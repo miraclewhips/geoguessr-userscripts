@@ -46,8 +46,9 @@ GM_addStyle(`
 
 const init = () => {
 	const observer = new MutationObserver(() => {
+		const gameRoot = document.querySelector(`div[class^="in-game_root__"]`);
 		const finalResults = document.querySelector(`div[class^="result-overlay_overlay__"]`);
-		document.body.classList.toggle(`mwhs-should-hide-scores`, !finalResults);
+		document.body.classList.toggle(`mwhs-should-hide-scores`, gameRoot && !finalResults);
 	});
 
 	observer.observe(document.body, { subtree: true, childList: true });
