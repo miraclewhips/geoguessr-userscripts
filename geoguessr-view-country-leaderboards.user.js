@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr View Country Leaderboards
 // @description  View leaderboards for all countries, not just your own
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -32,9 +32,10 @@ let SELECTED_COUNTRY;
 const THE_WINDOW = unsafeWindow || window;
 const default_fetch = THE_WINDOW.fetch;
 THE_WINDOW.fetch = (function () {
-	return async function (...args) {
+	return function (...args) {
 		const url = args[0].toString();
-		if(SELECTED_COUNTRY && url.includes(`geoguessr.com/api/v3/users/ratings`) && url.includes(`&country=`)) {
+		const isRatingsUrl = url.includes(`geoguessr.com/api/v3/users/ratings`) || url.includes(`geoguessr.com/api/v4/ranked-system/ratings`);
+		if(SELECTED_COUNTRY && isRatingsUrl && url.includes(`&country=`)) {
 			args[0] = url.replace(/&country=(\w{2})/, `&country=${SELECTED_COUNTRY}`);
 		}
 
