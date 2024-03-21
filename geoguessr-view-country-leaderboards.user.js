@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr View Country Leaderboards
 // @description  View leaderboards for all countries, not just your own
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -50,7 +50,7 @@ function changedCountry(e) {
 
 	SELECTED_COUNTRY = val;
 
-	const items = document.querySelectorAll(`div[class^="leaderboard_switch__"] div[class^="switch_switchItem__"]`);
+	const items = document.querySelectorAll(`div[class^="global-leaderboard_switch__"] div[class^="switch_switchItem__"]`);
 	if(!items || !items.length) return;
 
 	const label = items[items.length - 1].querySelector(`label`);
@@ -66,7 +66,7 @@ function changedCountry(e) {
 
 const init = () => {
 	const observer = new MutationObserver(() => {
-		const switchContainer = document.querySelector(`div[class^="leaderboard_switch__"] div[class^="switch_switch__"]`);
+		const switchContainer = document.querySelector(`div[class^="global-leaderboard_switch__"] div[class^="switch_switch__"]`);
 		
 		if(!switchContainer) {
 			SELECTED_COUNTRY = undefined;
@@ -79,7 +79,7 @@ const init = () => {
 		countries.id = 'mw-lb-countries';
 
 		let ihtml = '<option value="">Select country</option>';
-		for(let item of COUNTRY_LIST) {
+		for(const item of COUNTRY_LIST) {
 			ihtml += `<option value="${item[0].trim().toLowerCase()}">${item[1]}</option>`;
 		}
 
