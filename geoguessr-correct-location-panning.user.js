@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Correct Location Panning
 // @description  Opens GeoGuessr locations in Google Maps with the correct panning and coverage date when clicking the flag icon on the map
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -19,37 +19,29 @@ const THE_WINDOW = unsafeWindow || window;
 const default_fetch = THE_WINDOW.fetch;
 THE_WINDOW.fetch = (function () {
 	return async function (...args) {
+		let result;
 		const url = args[0].toString();
 		if(url.includes(`geoguessr.com/api/v3/games/`)) {
-			let result = await default_fetch.apply(THE_WINDOW, args);
+			result = await default_fetch.apply(THE_WINDOW, args);
 			latestGame = await result.clone().json();
-			return result;
-		}else if(document.location.pathname.startsWith(`/results/`)) {
-			const token = document.location.pathname.split(`/results/`)[1].split(`/`)[0];
-
-			if(url.includes(`/_next/data/`) && url.includes(`${token}.json?token=${token}`)) {
-				let result = await default_fetch.apply(THE_WINDOW, args);
-				const data = await result.clone().json();
-				latestResults = data?.pageProps;
-			}
-		}else if(document.location.pathname.startsWith(`/duels/`)) {
-			const token = document.location.pathname.split(`/duels/`)[1].split(`/`)[0];
-
-			if(url.includes(`/_next/data/`) && url.includes(`summary.json?token=${token}`)) {
-				let result = await default_fetch.apply(THE_WINDOW, args);
-				const data = await result.clone().json();
-				latestDuel = data?.pageProps?.game;
-			}
+		}else if(url.includes(`/_next/data/`) && url.includes(`summary.json?token=`)) {
+			result = await default_fetch.apply(THE_WINDOW, args);
+			const data = await result.clone().json();
+			latestDuel = data?.pageProps?.game;
+		}else if(url.includes(`/_next/data/`) && url.includes(`/results/`) && url.includes(`.json?token=`)) {
+			result = await default_fetch.apply(THE_WINDOW, args);
+			const data = await result.clone().json();
+			latestResults = data?.pageProps;
 		}
 
-		return default_fetch.apply(THE_WINDOW, args);
+		return result ?? default_fetch.apply(THE_WINDOW, args);
 	};
 })();
 
 function hex2a(hexx) {
-	var hex = hexx.toString();
-	var str = '';
-	for (var i = 0; i < hex.length; i += 2)
+	const hex = hexx.toString();
+	let str = '';
+	for (let i = 0; i < hex.length; i += 2)
 			str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
 	return str;
 }
@@ -96,9 +88,6 @@ function clickedMarkerChallenge(e) {
 	const data = latestGame || __NEXT_DATA__?.props?.pageProps?.gameSnapshot;
 	if(!data) return;
 
-	const token = document.location.pathname.split(`/challenge/`)[1].split(`/`)[0];
-	if(token !== latestGame?.token && token !== __NEXT_DATA__?.props?.pageProps?.token) return;
-
 	clickedMarker(e, data);
 }
 
@@ -109,8 +98,6 @@ function clickedMarkerResults(e) {
 	const data = props.gamePlayedByCurrentUser;
 	if(!data) return;
 
-	const token = document.location.pathname.split(`/results/`)[1].split(`/`)[0];
-	if(token !== (props.challengeToken ?? data.token)) return;
 	clickedMarker(e, data);
 }
 
