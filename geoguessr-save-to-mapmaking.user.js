@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Save To Map Making App
 // @description  Save locations to Map Making App after each round
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -21,12 +21,13 @@
 
 Requires an API key from Map Making App in order to save locations.
 Create one here: https://map-making.app/keys
-Make sure not to share this key with anybody or show it publically as it will allow anybody to edit your maps.
+Make sure not to share this key with anybody or show it publicly as it will allow anybody to edit your maps.
 
 Replace `PASTE_YOUR_KEY_HERE` with your generated API key (make sure not to delete the quotes surrounding the key) */
 const MAP_MAKING_API_KEY = "PASTE_YOUR_KEY_HERE";
 
-
+// Number of maps to show in the "Recent Maps" section
+const NUMBER_OF_RECENT_MAPS = 3;
 
 
 
@@ -197,10 +198,10 @@ function defaultState() {
 }
 
 function loadState() {
-	let data = window.localStorage.getItem('mwstmm_state');
+	const data = window.localStorage.getItem('mwstmm_state');
 	if(!data) return;
 	
-	let dataJson = JSON.parse(data);
+	const dataJson = JSON.parse(data);
 	if(!data) return;
 
 	Object.assign(MWSTMM_STATE, defaultState(), dataJson);
@@ -211,10 +212,8 @@ function saveState() {
 	window.localStorage.setItem('mwstmm_state', JSON.stringify(MWSTMM_STATE));
 }
 
-var MWSTMM_STATE = defaultState();
+const MWSTMM_STATE = defaultState();
 loadState();
-
-const LOADED_CAR_SETTING = MWSTMM_STATE.carSetting;
 
 async function mmaFetch(url, options = {}) {
 	const response = await fetch(new URL(url, 'https://map-making.app'), {
@@ -233,6 +232,7 @@ async function mmaFetch(url, options = {}) {
 				message = res.message;
 			}
 		} catch {
+			//empty
 		}
 		alert(`An error occurred while trying to connect to Map Making App. ${message}`);
 		throw Object.assign(new Error(message), { response });
@@ -261,8 +261,8 @@ async function importLocations(mapId, locations) {
 	await response.json();
 }
 
-var LOCATION;
-var MAP_LIST;
+let LOCATION;
+let MAP_LIST;
 
 if(!GeoGuessrEventFramework) {
 	throw new Error('GeoGuessr Location Manager requires GeoGuessr Event Framework (https://github.com/miraclewhips/geoguessr-event-framework). Please include this before you include GeoGuessr Location Manager.');
@@ -286,7 +286,7 @@ function hideLoader() {
 	if(element) element.remove();
 }
 
-async function clickedMapButton(e) {
+async function clickedMapButton() {
 	if(MAP_MAKING_API_KEY === 'PASTE_YOUR_KEY_HERE') {
 		alert('An API Key is required in order to save locations to Map Making App. Please add your API key by editing the Userscript and following the instructions at the top of the script.');
 		return;
@@ -297,7 +297,9 @@ async function clickedMapButton(e) {
 
 		try {
 			MAP_LIST = await getMaps();
-		}catch{}
+		}catch{
+			//empty
+		}
 
 		hideLoader();
 	}
@@ -315,9 +317,9 @@ function showMapList() {
 	element.className = 'mwstmm-modal';
 
 	let recentMapsSection = ``;
-	if(MWSTMM_STATE.recentMaps.length > 0) {
+	if(NUMBER_OF_RECENT_MAPS > 0 && MWSTMM_STATE.recentMaps.length > 0) {
 		let recentMapsHTML = '';
-		for(let m of MWSTMM_STATE.recentMaps) {
+		for(const m of MWSTMM_STATE.recentMaps) {
 			if(m.archivedAt) continue;
 			recentMapsHTML += `<div class="map">
 				<span class="map-name">${m.name}</span>
@@ -340,7 +342,7 @@ function showMapList() {
 	}
 
 	let mapsHTML = '';
-	for(let m of MAP_LIST) {
+	for(const m of MAP_LIST) {
 		if(m.archivedAt) continue;
 		mapsHTML += `<div class="map">
 			<span class="map-name">${m.name}</span>
@@ -380,12 +382,12 @@ function showMapList() {
 	document.getElementById('mwstmm-map-tags').addEventListener('keypress', e => e.stopPropagation());
 	document.getElementById('mwstmm-map-tags').focus();
 
-	for(let map of element.querySelectorAll('.maps .map-add')) {
+	for(const map of element.querySelectorAll('.maps .map-add')) {
 		map.addEventListener('click', addLocationToMap);
 	}
 }
 
-function closeMapList(e) {
+function closeMapList() {
 	const element = document.getElementById('mwstmm-map-list');
 	if(element) element.remove();
 }
@@ -394,11 +396,14 @@ function addLocationToMap(e) {
 	e.target.parentNode.classList.add('is-added');
 
 	const id = parseInt(e.target.dataset.id);
-	MWSTMM_STATE.recentMaps = MWSTMM_STATE.recentMaps.filter(e => e.id !== id).slice(0, 2);
-	for(let map of MAP_LIST) {
-		if(map.id === id) {
-			MWSTMM_STATE.recentMaps.unshift(map);
-			break;
+
+	if(NUMBER_OF_RECENT_MAPS > 0) {
+	MWSTMM_STATE.recentMaps = MWSTMM_STATE.recentMaps.filter(e => e.id !== id).slice(0, NUMBER_OF_RECENT_MAPS-1);
+		for(const map of MAP_LIST) {
+			if(map.id === id) {
+				MWSTMM_STATE.recentMaps.unshift(map);
+				break;
+			}
 		}
 	}
 	saveState();
