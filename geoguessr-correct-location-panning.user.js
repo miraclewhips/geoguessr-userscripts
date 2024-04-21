@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Correct Location Panning
 // @description  Opens GeoGuessr locations in Google Maps with the correct panning and coverage date when clicking the flag icon on the map
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -68,7 +68,8 @@ function openLink(e, loc) {
 }
 
 function clickedMarker(e, data) {
-	const round = parseInt(e.currentTarget.querySelector(`div[class*="styles_label__"]`)?.innerText ?? data.rounds.length);
+	const roundNum = data.player.guesses.length ?? data.rounds.length;
+	const round = parseInt(e.currentTarget.querySelector(`div[class*="styles_label__"]`)?.innerText ?? roundNum);
 	const loc = data.rounds[round - 1];
 	if(!loc) return;
 
@@ -113,7 +114,12 @@ function clickedMarkerDuels(e) {
 	const rows = document.querySelectorAll(`div[class^="game-summary_playedRound__"]`);
 	for(let i = 0; i < rows.length; i++) {
 		if(!rows[i].className.includes('game-summary_selectedRound__')) continue;
-		loc = data.rounds[i]?.panorama;
+
+		const roundEl = rows[i].querySelector(`div[class^="game-summary_text__"]`);
+		if(!roundEl) continue;
+
+		const round = parseInt(roundEl.childNodes[0].textContent.replace(/[^\d]/g, ''));
+		loc = data.rounds[round-1]?.panorama;
 		break;
 	}
 	
