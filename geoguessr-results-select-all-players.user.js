@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Results Select All Players
 // @description  Selects all players on the results screen
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -40,7 +40,7 @@ function select(enable) {
 	if(rows.length <= 1) return;
 
 	for(let i = 1; i < rows.length; i++) {
-		if(rows[i].className.includes('results_selected___') === enable) continue;
+		if(rows[i].className.includes('results_selected__') === enable) continue;
 		rows[i].click();
 	}
 }
@@ -54,7 +54,7 @@ function selectNone() {
 }
 
 function init() {
-	const observer = new MutationObserver(async () => {
+	const observer = new MutationObserver(() => {
 		const path = window.location.pathname;
 		if(!path.includes('/results/')) return;
 
