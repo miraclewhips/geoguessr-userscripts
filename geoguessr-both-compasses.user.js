@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Both Compasses
 // @description  Shows both compasses (classic compass must be disabled in GeoGuessr settings)
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -34,7 +34,8 @@ GM_addStyle(`
 	user-select: none;
 	width: 3rem;
 	left: 0;
-	bottom: 14rem;
+	bottom: 100%;
+	margin-bottom: 1rem;
 }
 
 .mwgtm-compass .circle {
@@ -54,17 +55,29 @@ GM_addStyle(`
 }
 `);
 
+function pointCompass() {
+	const arrow = document.getElementById('mwgtm-compass-arrow');
+	if(!MWGTM_SV || !arrow) return;
+
+	const heading = MWGTM_SV.getPov().heading;
+	arrow.style.transform = `rotate(${-heading}deg)`;
+}
+
 const observer = new MutationObserver(() => {
 	if(document.getElementById('mwgtm-restore-classic-compass')) return;
 
-	let container = document.querySelector('aside[class^="game_controls___"]');
+	const controls = document.querySelector(`aside[class^="game_controls__"]`) || document.querySelector(`aside[class^="game-panorama_controls__"]`);
+	if(!controls) return;
+
+	const container = controls.querySelector('div[class^="styles_columnOne__"]');
 	if(container) {
-		let compass = document.createElement('div');
+		const compass = document.createElement('div');
 		compass.id = 'mwgtm-restore-classic-compass';
 		compass.className = 'mwgtm-compass';
 		compass.innerHTML = `<div class="circle"></div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 96" class="arrow" id="mwgtm-compass-arrow"><g fill="none" fill-rule="evenodd"><path fill="#B82A2A" d="M12 0v48H0z"/><path fill="#CC2F30" d="M12 0v48h12z"/><path fill="#E6E6E6" d="M12 96V48H0z"/><path fill="#FFF" d="M12 96V48h12z"/></g></svg>`;
 		container.appendChild(compass);
 		container.classList.add('mwgtm-override-classic-compass');
+		pointCompass();
 	}
 });
 
@@ -108,7 +121,9 @@ function injecter(overrider) {
 	}).observe(document.documentElement, { childList: true, subtree: true });
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
+let MWGTM_SV;
+
+document.addEventListener('DOMContentLoaded', () => {
 	injecter(() => {
 		const google = window['google'] || unsafeWindow['google'];
 		if(!google) return;
@@ -116,14 +131,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		google.maps.StreetViewPanorama = class extends google.maps.StreetViewPanorama {
 			constructor(...args) {
 				super(...args);
-				const MWGTM_SV = this;
+				MWGTM_SV = (this);
 
 				MWGTM_SV.addListener('pov_changed', () => {
-					const arrow = document.getElementById('mwgtm-compass-arrow');
-					if(!arrow) return;
-
-					const heading = MWGTM_SV.getPov().heading;
-					arrow.style.transform = `rotate(${-heading}deg)`;
+					pointCompass();
 				});
 			}
 		}
