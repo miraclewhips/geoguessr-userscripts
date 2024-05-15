@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Save To Map Making App
 // @description  Save locations to Map Making App after each round
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -128,6 +128,7 @@ GM_addStyle(`
 	cursor: pointer;
 	opacity: 0.75;
 	transition: opacity 0.2s;
+	pointer-events: auto;
 }
 
 .mwstmm-settings-option:hover {
@@ -188,6 +189,16 @@ GM_addStyle(`
 	border-radius: 5px;
 	font-size: 13px;
 	font-weight: bold;
+}
+
+div[class^="result-list_listItemWrapper__"] {
+	position: relative;
+}
+
+div[class^="result-list_listItemWrapper__"] .mwstmm-settings-option {
+	margin-left: auto;
+	line-height: 1;
+	align-self: center;
 }
 `);
 
@@ -261,7 +272,7 @@ async function importLocations(mapId, locations) {
 	await response.json();
 }
 
-let LOCATION;
+let LOCATION, ROUNDS;
 let MAP_LIST;
 
 if(!GeoGuessrEventFramework) {
@@ -453,23 +464,52 @@ function addSettingsButtonsToSummary() {
 
 function createSettingsButtonSummaryEvents() {
 	document.getElementById('mwstmm-opt-save-loc').addEventListener('click', () => {
+		LOCATION = ROUNDS[ROUNDS.length - 1].location;
 		clickedMapButton();
 	});
 
 	document.getElementById('mwstmm-opt-open-maps').addEventListener('click', () => {
+		LOCATION = ROUNDS[ROUNDS.length - 1].location;
 		const link = googleMapsLink(LOCATION);
 		GM_openInTab(link, false);
 	});
 }
 
+function addResultButton(location, item) {
+	const btn = document.createElement('div');
+	btn.className = `mwstmm-settings-option`;
+	btn.textContent = `SAVE`;
+
+	btn.addEventListener('click', () => {
+		LOCATION = location;
+		clickedMapButton();
+	});
+
+	item.appendChild(btn);
+}
+
+const observer = new MutationObserver(() => {
+	if(!ROUNDS || ROUNDS.length !== 5) return;
+
+	const wrapper = document.querySelector(`div[class^="result-list_listWrapper__"]`);
+	if(!wrapper || wrapper.dataset.mwstmm === 'true') return;
+	
+	wrapper.dataset.mwstmm = 'true';
+
+	const items = wrapper.querySelectorAll(`div[class^="result-list_listItemWrapper__"]`);
+	for(let i = 0; i < 5; i++) {
+		if(!items[i]) return;
+		addResultButton(ROUNDS[i].location, items[i]);
+	}
+});
+
+observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+
 GeoGuessrEventFramework.init().then(GEF => {
 	console.log('GeoGuessr Save To Map Making App initialised.');
 
 	GEF.events.addEventListener('round_end', (state) => {
-		const loc = state.detail.rounds[state.detail.rounds.length - 1]?.location;
-		if(!loc) return;
-
-		LOCATION = loc;
+		ROUNDS = state.detail.rounds;
 		addSettingsButtonsToSummary();
 	});
 });
