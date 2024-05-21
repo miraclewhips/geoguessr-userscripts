@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         GeoGuessr Games Played Counter
 // @description  Shows how many games you have played and allows you to set a counter (click counter on the game screen to configure)
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -100,11 +100,16 @@ function getSummaryPanel() {
 }
 
 function updateRoundPanel() {
+	const gameScore = document.querySelector('div[class^="game_status__"] div[class^="status_section"][data-qa="score"]');
 	let panel = getRoundPanel();
 
-	if(!panel) {
-		const gameScore = document.querySelector('div[class^="game_status__"] div[class^="status_section"][data-qa="score"]');
+	const forceUpdate = gameScore && !panel;
 
+	if(!forceUpdate && (!shouldUpdateRoundPanel || !gameScore)) return;
+
+	shouldUpdateRoundPanel = false;
+
+	if(!panel) {
 		if(gameScore) {
 			panel = document.createElement('div');
 			panel.id = `streak-counter-panel-games-played`;
@@ -150,6 +155,8 @@ function createStreakElement() {
 }
 
 function updateSummaryPanel() {
+	if(!shouldUpdateSummaryPanel) return;
+
 	const scoreLayout = document.querySelector('div[class^="result-layout_root"] div[class^="round-result_wrapper__"]');
 
 	const scoreLayoutBottom = document.querySelector('div[class^="result-layout_root"] div[class^="result-layout_bottomNew__"]');
@@ -159,6 +166,8 @@ function updateSummaryPanel() {
 	}
 
 	if(!scoreLayout && !scoreLayoutBottom) return;
+
+	shouldUpdateSummaryPanel = false;
 
 	let panel = getSummaryPanel();
 
@@ -186,6 +195,15 @@ async function updateCount(id) {
 	saveState();
 }
 
+const observer = new MutationObserver(() => {
+	updateStreakPanels();
+});
+
+observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+
+let shouldUpdateRoundPanel = false;
+let shouldUpdateSummaryPanel = false;
+
 async function init() {
 	loadState();
 
@@ -195,13 +213,16 @@ async function init() {
 	if(GeoGuessrEventFramework) {
 		GeoGuessrEventFramework.init().then(GEF => {
 			GEF.events.addEventListener('round_start', () => {
+				shouldUpdateRoundPanel = true;
 				updateStreakPanels();
 			});
 
 			GEF.events.addEventListener('game_end', async () => {
 				STATE.checking_api = true;
+				shouldUpdateSummaryPanel = true;
 				updateStreakPanels();
 				await updateCount(USER_ID);
+				shouldUpdateSummaryPanel = true;
 				updateStreakPanels();
 			});
 		});
@@ -297,6 +318,7 @@ function configure() {
 		STATE.type = vals.type;
 
 		saveState();
+		shouldUpdateRoundPanel = true;
 		updateStreakPanels();
 		conf.remove();
 	});
