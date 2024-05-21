@@ -518,7 +518,6 @@ GeoGuessrEventFramework.init().then(GEF => {
 
 	GEF.events.addEventListener('round_end', (state) => {
 		ROUNDS = state.detail.rounds;
-		console.log(state.detail)
 		shouldAddSettingsButtonToSummary = true;
 	});
 });
