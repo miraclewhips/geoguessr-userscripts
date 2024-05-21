@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         GeoGuessr Save To Map Making App
 // @description  Save locations to Map Making App after each round
-// @version      1.4
+// @version      1.5
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=8
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=9
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @grant        GM_addStyle
@@ -443,9 +443,13 @@ function googleMapsLink(loc) {
 }
 
 function addSettingsButtonsToSummary() {
+	if(!shouldAddSettingsButtonToSummary) return;
+
 	const container = document.querySelector(`div[data-qa="result-view-top"]`);
 
 	if(!container || document.getElementById('mwstmm-settings-buttons-summary')) return;
+
+	shouldAddSettingsButtonToSummary = false;
 
 	const element = document.createElement('div');
 	element.id = 'mwstmm-settings-buttons-summary';
@@ -488,7 +492,11 @@ function addResultButton(location, item) {
 	item.appendChild(btn);
 }
 
+let shouldAddSettingsButtonToSummary = false;
+
 const observer = new MutationObserver(() => {
+	addSettingsButtonsToSummary();
+
 	if(!ROUNDS || ROUNDS.length !== 5) return;
 
 	const wrapper = document.querySelector(`div[class^="result-list_listWrapper__"]`);
@@ -510,6 +518,7 @@ GeoGuessrEventFramework.init().then(GEF => {
 
 	GEF.events.addEventListener('round_end', (state) => {
 		ROUNDS = state.detail.rounds;
-		addSettingsButtonsToSummary();
+		console.log(state.detail)
+		shouldAddSettingsButtonToSummary = true;
 	});
 });

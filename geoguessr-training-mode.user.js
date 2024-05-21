@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.9
+// @version      1.10
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=8
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=9
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @grant        GM_addStyle
@@ -52,7 +52,8 @@ const compassColors = {
 
 GM_addStyle(`
 .mwgtm-override-classic-compass button[class^="compass_compass__"],
-body.mwgtm-compass-hidden div[class^="panorama-compass_compassContainer__"] ,
+body.mwgtm-compass-hidden button[class^="compass_compass__"],
+body.mwgtm-compass-hidden div[class^="panorama-compass_compassContainer__"],
 body.mwgtm-compass-hidden .mwgtm-compass {
 	display: none !important;
 }
@@ -336,6 +337,14 @@ aside[class^="game_controls___"] {
 }
 `);
 
+function pointCompass() {
+	const arrow = document.getElementById('mwgtm-compass-arrow');
+	if(!MWGTM_SV || !arrow) return;
+
+	const heading = MWGTM_SV.getPov().heading;
+	arrow.style.transform = `rotate(${-heading}deg)`;
+}
+
 function defaultState() {
 	return {
 		compassHidden: false,
@@ -419,9 +428,13 @@ if(!GeoGuessrEventFramework) {
 }
 
 function addSettingsButtonsToRound() {
+	if(!shouldAddSettingsButtonToRound) return;
+
 	const container = document.querySelector(`div[class^="game_canvas__"]`);
 
 	if(!container || document.getElementById('mwgtm-settings-buttons')) return;
+
+	shouldAddSettingsButtonToRound = false;
 
 	let faceNorthBtn = '';
 	if(!JSON.parse(window.localStorage.getItem('game-settings')).forbidRotating) {
@@ -746,9 +759,13 @@ function googleMapsLink(loc) {
 }
 
 function addSettingsButtonsToSummary() {
+	if(!shouldAddSettingsButtonToSummary) return;
+
 	const container = document.querySelector(`div[data-qa="result-view-top"]`);
 
 	if(!container || document.getElementById('mwgtm-settings-buttons-summary')) return;
+
+	shouldAddSettingsButtonToSummary = false;
 
 	const element = document.createElement('div');
 	element.id = 'mwgtm-settings-buttons-summary';
@@ -786,6 +803,9 @@ function createSettingsButtonSummaryEvents() {
 	});
 }
 
+let shouldAddSettingsButtonToRound = false;
+let shouldAddSettingsButtonToSummary = false;
+
 GeoGuessrEventFramework.init().then(GEF => {
 	console.log('GeoGuessr Training Mode initialised.');
 
@@ -802,7 +822,7 @@ GeoGuessrEventFramework.init().then(GEF => {
 	})
 
 	GEF.events.addEventListener('round_start', (state) => {
-		addSettingsButtonsToRound();
+		shouldAddSettingsButtonToRound = true;
 	});
 
 	GEF.events.addEventListener('round_end', (state) => {
@@ -810,15 +830,21 @@ GeoGuessrEventFramework.init().then(GEF => {
 		if(!loc) return;
 
 		LOCATION = loc;
-		addSettingsButtonsToSummary();
+		shouldAddSettingsButtonToSummary = true;
 	});
 });
 
 //styles_columnOne__rw8hK
 const observer = new MutationObserver(() => {
+	addSettingsButtonsToRound();
+	addSettingsButtonsToSummary();
+
 	if(document.getElementById('mwgtm-restore-classic-compass')) return;
 
-	let container = document.querySelector('aside[class^="game_controls___"]');
+	const controls = document.querySelector(`aside[class^="game_controls__"]`) || document.querySelector(`aside[class^="game-panorama_controls__"]`);
+	if(!controls) return;
+
+	const container = controls.querySelector('div[class^="styles_columnOne__"]');
 	if(container) {
 		let compass = document.createElement('div');
 		compass.id = 'mwgtm-restore-classic-compass';
@@ -826,6 +852,7 @@ const observer = new MutationObserver(() => {
 		compass.innerHTML = `<div class="circle"></div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 96" class="arrow" id="mwgtm-compass-arrow"><g fill="none" fill-rule="evenodd"><path fill="#B82A2A" d="M12 0v48H0z"/><path fill="#CC2F30" d="M12 0v48h12z"/><path fill="#E6E6E6" d="M12 96V48H0z"/><path fill="#FFF" d="M12 96V48h12z"/></g></svg>`;
 		container.appendChild(compass);
 		container.classList.add('mwgtm-override-classic-compass');
+		pointCompass();
 	}
 });
 
@@ -882,11 +909,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				MWGTM_SV = this;
 
 				MWGTM_SV.addListener('pov_changed', () => {
-					const arrow = document.getElementById('mwgtm-compass-arrow');
-					if(!arrow) return;
-
-					const heading = MWGTM_SV.getPov().heading;
-					arrow.style.transform = `rotate(${-heading}deg)`;
+					pointCompass();
 				});
 			}
 		}

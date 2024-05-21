@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         GeoGuessr World Score Reference
 // @description  See approximately what a round score would have been on a world map (while playing other maps e.g. country-specific maps)
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=8
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=9
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @grant        GM_addStyle
@@ -56,20 +56,32 @@ function getScoreFromDistance(metres) {
 	return points;
 }
 
+const observer = new MutationObserver(() => {
+	if(!shouldAddScoreReference) return;
+
+	const container = document.querySelector(`div[class^="round-result_pointsIndicatorWrapper__"]`);
+	if(!container || document.getElementById('mw-wsr')) return;
+
+	shouldAddScoreReference = false;
+
+	const text = document.createElement('div');
+	text.id = 'mw-wsr';
+	text.textContent = `World Score Approx: ${SCORE.toLocaleString()}`;
+	container.appendChild(text);
+});
+
+observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+
+let SCORE;
+let shouldAddScoreReference = false;
+
 GeoGuessrEventFramework.init().then(GEF => {
 	GEF.events.addEventListener('round_end', (state) => {
 		const round = state.detail.rounds[state.detail.rounds.length - 1];
 		const distance = round?.distance?.meters?.amount * (round?.distance?.meters?.unit === 'km' ? 1000 : 1);
 		if(isNaN(distance)) return;
 		
-		const score = getScoreFromDistance(distance);
-
-		const container = document.querySelector(`div[class^="round-result_pointsIndicatorWrapper__"]`);
-		if(!container || document.getElementById('mw-wsr')) return;
-
-		const text = document.createElement('div');
-		text.id = 'mw-wsr';
-		text.textContent = `World Score Approx: ${score.toLocaleString()}`;
-		container.appendChild(text);
+		SCORE = getScoreFromDistance(distance);
+		shouldAddScoreReference = true;
 	});
 });
