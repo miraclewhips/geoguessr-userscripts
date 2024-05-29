@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.10
+// @version      1.10.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -808,6 +808,15 @@ let shouldAddSettingsButtonToSummary = false;
 
 GeoGuessrEventFramework.init().then(GEF => {
 	console.log('GeoGuessr Training Mode initialised.');
+
+	// Check and initialize game-settings if missing
+    if (!window.localStorage.getItem('game-settings')) {
+        const defaultGameSettings = {
+                forbidRotating: false
+        };
+        window.localStorage.setItem('game-settings', JSON.stringify(defaultGameSettings));
+        console.log("Initialized game-settings in localStorage");
+    }
 
 	document.addEventListener('keypress', (e) => {
 		if(e.ctrlKey || e.shiftKey || e.metaKey || e.altKey || document.activeElement.tagName === 'INPUT') return;
