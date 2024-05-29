@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Compass North Hotkey (N)
 // @description  Press N to point the streetview map due north
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -77,7 +77,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 document.addEventListener('keyup', (event) => {
-	if(JSON.parse(window.localStorage.getItem('game-settings')).forbidRotating) return;
+	const settings = JSON.parse(window.localStorage.getItem('game-settings')) ?? {forbidRotating: false};
+	if(settings.forbidRotating) return;
 
 	if(MWStreetViewInstance && event.key === 'n') {
 		let pov = MWStreetViewInstance.getPov();

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.10
+// @version      1.11
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -437,7 +437,10 @@ function addSettingsButtonsToRound() {
 	shouldAddSettingsButtonToRound = false;
 
 	let faceNorthBtn = '';
-	if(!JSON.parse(window.localStorage.getItem('game-settings')).forbidRotating) {
+
+	const settings = JSON.parse(window.localStorage.getItem('game-settings')) ?? {forbidRotating: false};
+
+	if(!settings.forbidRotating) {
 		faceNorthBtn = `<div class="mwgtm-settings-option" id="mwgtm-opt-compass-north">FACE NORTH - [ N ]</div>`;
 	}
 
@@ -491,7 +494,8 @@ function createSettingsButtonEvents() {
 function lookNorth() {
 	if(!document.getElementById('mwgtm-opt-compass-north')) return;
 
-	if(JSON.parse(window.localStorage.getItem('game-settings')).forbidRotating) return;
+	const settings = JSON.parse(window.localStorage.getItem('game-settings')) ?? {forbidRotating: false};
+	if(settings.forbidRotating) return;
 
 	if(MWGTM_SV) {
 		let pov = MWGTM_SV.getPov();

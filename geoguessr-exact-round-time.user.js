@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Exact Round Time
 // @description  Allows you to change the round time limit in increments smaller than 10s
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -25,7 +25,7 @@ const createButton = (text) => {
 }
 
 const adjustTime = (t) => {
-	let currentSettings = JSON.parse(localStorage.getItem('game-settings'));
+	let currentSettings = JSON.parse(localStorage.getItem('game-settings')) ?? {};
 	currentSettings.timeLimit = Math.max(0, currentSettings.timeLimit + t);
 	localStorage.setItem('game-settings', JSON.stringify(currentSettings));
 	window.dispatchEvent(new Event('storage'));
