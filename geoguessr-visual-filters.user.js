@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         GeoGuessr Visual Filters
 // @description  Applies visual filters to the streetview map
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        none
-// @copyright    2022, miraclewhips (https://github.com/miraclewhips)
+// @copyright    2024, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-visual-filters.user.js
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-visual-filters.user.js
@@ -119,14 +119,14 @@ const filters = () => {
 		</svg>
 	`;
 
-	return `.game-layout__canvas .widget-scene-canvas { filter: ${output.length > 0 ? output.join(' ') : 'none'}; }`;
+	return `div[class^="game_canvas__"] .widget-scene-canvas { filter: ${output.length > 0 ? output.join(' ') : 'none'}; }`;
 }
 
 const addConfigButton = () => {
 	let panel = document.getElementById('visual-filters-button');
 	if(panel) return;
 
-	let gameScore = document.querySelector('.game-layout__status div[class^="status_section"][data-qa="score"]');
+	let gameScore = document.querySelector('div[class^="game_status__"] div[class^="status_section__"][data-qa="score"]');
 	if(!gameScore) return;
 
 	let newPanel = document.createElement('div');
