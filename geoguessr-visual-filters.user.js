@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         GeoGuessr Visual Filters
 // @description  Applies visual filters to the streetview map
-// @version      1.4
+// @version      1.5
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        none
 // @copyright    2024, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
-// @downloadURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-visual-filters.user.js
+// @downloadURL	 https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-visual-filters.user.js
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-visual-filters.user.js
 // ==/UserScript==
 
@@ -30,7 +30,9 @@ let FILTER_LIST = {
 	blur: { name: 'Blur', default: 0, min: 0, max: 100, unit: 'px' },
 	erode: { name: 'Erode', default: 0, min: 0, max: 50 },
 	dilate: { name: 'Dilate', default: 0, min: 0, max: 50 },
-	mosaic: { name: 'Mosaic', default: 0, min: 0, max: 100 }
+	mosaic: { name: 'Mosaic', default: 0, min: 0, max: 100 },
+	flip_h: { name: 'Flip Horizontal', default: false, type: 'bool' },
+	flip_v: { name: 'Flip Vertical', default: false, type: 'bool' },
 }
 
 const exists = (n) => (VALS && typeof VALS[n] !== 'undefined' && VALS[n] !== FILTER_LIST[n].default);
@@ -55,46 +57,55 @@ const val = (n) => {
 }
 
 const filters = () => {
-	let output = [];
+	let outputFilter = [];
+	let outputTransform = [];
 
 	if(exists('hue')) {
-		output.push(`hue-rotate(${val('hue')}deg)`);
+		outputFilter.push(`hue-rotate(${val('hue')}deg)`);
 	}
 
 	if(exists('saturate')) {
-		output.push(`saturate(${val('saturate')}%)`);
+		outputFilter.push(`saturate(${val('saturate')}%)`);
 	}
 
 	if(exists('brightness')) {
-		output.push(`brightness(${val('brightness')}%)`);
+		outputFilter.push(`brightness(${val('brightness')}%)`);
 	}
 
 	if(exists('contrast')) {
-		output.push(`contrast(${val('contrast')}%)`);
+		outputFilter.push(`contrast(${val('contrast')}%)`);
 	}
 
 	if(exists('invert')) {
-		output.push(`invert(${val('invert') ? 100 : 0}%)`);
+		outputFilter.push(`invert(${val('invert') ? 100 : 0}%)`);
 	}
 
 	if(exists('sepia')) {
-		output.push(`sepia(${val('sepia')}%)`);
+		outputFilter.push(`sepia(${val('sepia')}%)`);
 	}
 
 	if(exists('blur')) {
-		output.push(`blur(${val('blur')}px)`);
+		outputFilter.push(`blur(${val('blur')}px)`);
 	}
 
 	if(exists('erode')) {
-		output.push(`url(#vf_svg_erode)`);
+		outputFilter.push(`url(#vf_svg_erode)`);
 	}
 
 	if(exists('dilate')) {
-		output.push(`url(#vf_svg_dilate)`);
+		outputFilter.push(`url(#vf_svg_dilate)`);
 	}
 
 	if(exists('mosaic')) {
-		output.push(`url(#vf_svg_mosaic)`);
+		outputFilter.push(`url(#vf_svg_mosaic)`);
+	}
+
+	if(exists('flip_h')) {
+		outputTransform.push(`scaleX(${val('flip_h') ? '-1' : '1'})`);
+	}
+
+	if(exists('flip_v')) {
+		outputTransform.push(`scaleY(${val('flip_v') ? '-1' : '1'})`);
 	}
 
 	document.getElementById('GEO_VF_SVG_FILTERS').innerHTML = `
@@ -119,7 +130,10 @@ const filters = () => {
 		</svg>
 	`;
 
-	return `div[class^="game_canvas__"] .widget-scene-canvas { filter: ${output.length > 0 ? output.join(' ') : 'none'}; }`;
+	return `div[class^="game_canvas__"] .widget-scene-canvas {
+		filter: ${outputFilter.length > 0 ? outputFilter.join(' ') : 'none'};
+		transform: ${outputTransform.length > 0 ? outputTransform.join(' ') : 'none'};
+	}`;
 }
 
 const addConfigButton = () => {
@@ -252,7 +266,7 @@ const init = () => {
 			z-index: 100;
 			color: #ccc;
 			font-size: 16px;
-			width: 300px;
+			width: 400px;
 		}
 
 		#GEO_VF_CONFIG.is-hidden {
@@ -282,7 +296,7 @@ const init = () => {
 		}
 
 		.vf_field label {
-			flex: 0 0 90px;
+			flex: 0 0 120px;
 		}
 
 		.vf_input_container {
