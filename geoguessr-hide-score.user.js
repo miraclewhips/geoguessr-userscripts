@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Hide Score
 // @description  Hides your score and guesses while playing the game and only shows it at the end
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -18,8 +18,9 @@
 
 GM_addStyle(`
 	body.mwhs-should-hide-scores div[class^="status_section__"][data-qa="score"],
-	body.mwhs-should-hide-scores div[class^="round-result_distanceIndicatorWrapper___"],
+	body.mwhs-should-hide-scores div[class^="round-result_distanceIndicatorWrapper__"],
 	body.mwhs-should-hide-scores div[class^="round-result_pointsIndicatorWrapper__"],
+	body.mwhs-should-hide-scores div[class^="current-standings_container__"],
 	body.mwhs-should-hide-scores div[id^="streak-score-panel-summary-"],
 	body.mwhs-should-hide-scores div[id^="streak-counter-panel-"] {
 		display: none !important;
