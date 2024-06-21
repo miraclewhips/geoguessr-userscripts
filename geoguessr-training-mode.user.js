@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.11
+// @version      1.12
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -428,13 +428,8 @@ if(!GeoGuessrEventFramework) {
 }
 
 function addSettingsButtonsToRound() {
-	if(!shouldAddSettingsButtonToRound) return;
-
 	const container = document.querySelector(`div[class^="game_canvas__"]`);
-
 	if(!container || document.getElementById('mwgtm-settings-buttons')) return;
-
-	shouldAddSettingsButtonToRound = false;
 
 	let faceNorthBtn = '';
 
@@ -763,13 +758,8 @@ function googleMapsLink(loc) {
 }
 
 function addSettingsButtonsToSummary() {
-	if(!shouldAddSettingsButtonToSummary) return;
-
 	const container = document.querySelector(`div[data-qa="result-view-top"]`);
-
 	if(!container || document.getElementById('mwgtm-settings-buttons-summary')) return;
-
-	shouldAddSettingsButtonToSummary = false;
 
 	const element = document.createElement('div');
 	element.id = 'mwgtm-settings-buttons-summary';
@@ -807,9 +797,6 @@ function createSettingsButtonSummaryEvents() {
 	});
 }
 
-let shouldAddSettingsButtonToRound = false;
-let shouldAddSettingsButtonToSummary = false;
-
 GeoGuessrEventFramework.init().then(GEF => {
 	console.log('GeoGuessr Training Mode initialised.');
 
@@ -825,16 +812,11 @@ GeoGuessrEventFramework.init().then(GEF => {
 		}
 	})
 
-	GEF.events.addEventListener('round_start', (state) => {
-		shouldAddSettingsButtonToRound = true;
-	});
-
 	GEF.events.addEventListener('round_end', (state) => {
 		const loc = state.detail.rounds[state.detail.rounds.length - 1]?.location;
 		if(!loc) return;
 
 		LOCATION = loc;
-		shouldAddSettingsButtonToSummary = true;
 	});
 });
 

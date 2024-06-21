@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr World Score Reference
 // @description  See approximately what a round score would have been on a world map (while playing other maps e.g. country-specific maps)
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -57,23 +57,19 @@ function getScoreFromDistance(metres) {
 }
 
 const observer = new MutationObserver(() => {
-	if(!shouldAddScoreReference) return;
-
 	const container = document.querySelector(`div[class^="round-result_pointsIndicatorWrapper__"]`);
-	if(!container || document.getElementById('mw-wsr')) return;
-
-	shouldAddScoreReference = false;
+	if(SCORE === undefined || !container || document.getElementById('mw-wsr')) return;
 
 	const text = document.createElement('div');
 	text.id = 'mw-wsr';
 	text.textContent = `World Score Approx: ${SCORE.toLocaleString()}`;
 	container.appendChild(text);
+	SCORE = undefined;
 });
 
 observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
 
 let SCORE;
-let shouldAddScoreReference = false;
 
 GeoGuessrEventFramework.init().then(GEF => {
 	GEF.events.addEventListener('round_end', (state) => {
@@ -82,6 +78,5 @@ GeoGuessrEventFramework.init().then(GEF => {
 		if(isNaN(distance)) return;
 		
 		SCORE = getScoreFromDistance(distance);
-		shouldAddScoreReference = true;
 	});
 });
