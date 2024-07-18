@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Custom Streaks
 // @description  Streak script that allows you to use GeoJSON data for streaks
-// @version      1.8
+// @version      1.9
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -36,10 +36,22 @@ const KEYBOARD_SHORTCUTS = {
 /* ------------------------------------------------------------------------------- */
 /* ----- CUSTOM POLYGONS (MUST RELOAD PAGE FOR CHANGES TO TAKE EFFECT) ----------- */
 /* ------------------------------------------------------------------------------- */
+
+// Set whether or not to draw the custom polygons on the map (`true` or `false`)
+const SHOW_POLYGONS_ON_MAP = false;
+
+// Colour to draw the polygon outlines (https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)
+const POLYGON_OUTLINE_COLOR = 'red';
+
+// Thiccness of the polygon outlines
+const POLYGON_OUTLINE_THICCNESS = 2;
+
 // You can create your own custom GeoJSON polygons using: https://geojson.io/
 // Guide: https://github.com/miraclewhips/geoguessr-userscripts/blob/master/guides/custom-streak.md
 // replace `null` with GeoJSON data to use custom polygons
 const CUSTOM_POLYGONS = null;
+
+
 
 
 
@@ -62,11 +74,12 @@ function checkPolygons(pos) {
 
 	for(let i = 0; i < features.length; i++) {
 		const poly = features[i]?.geometry?.coordinates;
+		const multi = features[i]?.geometry?.type === 'MultiPolygon';
 		if(!poly) throw new Error("Invalid GeoJSON data.");
 
-		const turfPoint = turf.helpers.point([pos.lng, pos.lat])
-		const turfPoly = turf.helpers.polygon(poly)
-		const turfMatch = turf.booleanPointInPolygon(turfPoint, turfPoly)
+		const turfPoint = turf.helpers.point([pos.lng, pos.lat]);
+		const turfPoly = multi ? turf.helpers.multiPolygon(poly) : turf.helpers.polygon(poly);
+		const turfMatch = turf.booleanPointInPolygon(turfPoint, turfPoly);
 
 		if(turfMatch) {
 			return {
@@ -105,3 +118,95 @@ const GSF = new GeoGuessrStreakFramework({
 	custom_match_function: customMatch,
 	keyboard_shortcuts: KEYBOARD_SHORTCUTS,
 });
+
+if(SHOW_POLYGONS_ON_MAP) {
+	const CUSTOM_WINDOW = unsafeWindow ?? window;
+
+	function extractPolyList(array) {
+		const list = [];
+
+		function extract(arr) {
+			for(let el of arr) {
+				if(typeof el[0][0] === 'number') {
+					list.push(el);
+				}else{
+					extract(el);
+				}
+			}
+		}
+
+		extract(array);
+		return list;
+	}
+
+	function createGooglePolygons(mapInstance) {
+		for(const poly of CUSTOM_POLYGONS?.features) {
+			const polyList = [];
+
+			const list = extractPolyList(poly?.geometry?.coordinates);
+
+			for(const innerPoly of list) {
+				polyList.push(innerPoly.map(arr => ({lat: arr[1], lng: arr[0]})));
+			}
+
+			const gPoly = new google.maps.Polygon({
+				clickable: false,
+				paths: polyList,
+				strokeColor: POLYGON_OUTLINE_COLOR,
+				strokeOpacity: 1,
+				strokeWeight: POLYGON_OUTLINE_THICCNESS,
+				fillOpacity: 0,
+			});
+
+			gPoly.setMap(mapInstance);
+		}
+	}
+
+	function overrideOnLoad(googleScript, observer, overrider) {
+		const oldOnload = googleScript.onload;
+		googleScript.onload = (event) => {
+			const google = CUSTOM_WINDOW['google'];
+			if (google) {
+				observer.disconnect();
+				overrider(google);
+			}
+			if (oldOnload) {
+				oldOnload.call(googleScript, event);
+			}
+		}
+	}
+
+	function grabGoogleScript(mutations) {
+		for (const mutation of mutations) {
+			for (const newNode of mutation.addedNodes) {
+				const asScript = newNode;
+				if (asScript && asScript.src && asScript.src.startsWith('https://maps.googleapis.com/')) {
+					return asScript;
+				}
+			}
+		}
+		return null;
+	}
+
+	function injecter(overrider) {
+		new MutationObserver((mutations, observer) => {
+			const googleScript = grabGoogleScript(mutations);
+			if (googleScript) {
+				overrideOnLoad(googleScript, observer, overrider);
+			}
+		}).observe(document.documentElement, { childList: true, subtree: true });
+	}
+
+	document.addEventListener('DOMContentLoaded', () => {
+		injecter(() => {
+			if(!CUSTOM_WINDOW['google']) return reject();
+
+			CUSTOM_WINDOW['google'].maps.Map = class extends CUSTOM_WINDOW['google'].maps.Map {
+				constructor(...args) {
+					super(...args);
+					createGooglePolygons(this);
+				}
+			}
+		});
+	});
+}
