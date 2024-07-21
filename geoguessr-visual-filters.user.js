@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Visual Filters
 // @description  Applies visual filters to the streetview map
-// @version      1.5
+// @version      1.6
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -315,6 +315,12 @@ const init = () => {
 		.vf_field input[type=range] {
 			width: 100%;
 		}
+
+		#GEO_VF_SVG_FILTERS {
+			position: absolute;
+			z-index: -1;
+			visibility: hidden;
+		}
 	`;
 	document.body.append(configStyle);
 
@@ -337,7 +343,6 @@ const init = () => {
 
 	let svgFilters = document.createElement('div');
 	svgFilters.id = 'GEO_VF_SVG_FILTERS';
-	svgFilters.style.display = 'none';
 	document.body.append(svgFilters);
 
 	let filterStyle = document.createElement('style');
