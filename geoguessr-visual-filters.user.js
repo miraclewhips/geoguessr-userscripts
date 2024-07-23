@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Visual Filters
 // @description  Applies visual filters to the streetview map
-// @version      1.6
+// @version      1.7
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -95,7 +95,7 @@ const filters = () => {
 	if(exists('dilate')) {
 		outputFilter.push(`url(#vf_svg_dilate)`);
 	}
-
+	
 	if(exists('mosaic')) {
 		outputFilter.push(`url(#vf_svg_mosaic)`);
 	}
@@ -224,7 +224,7 @@ const valueChange = (e) => {
 			break;
 
 		default:
-			VALS[n] = e.target.value;
+			VALS[n] = parseInt(e.target.value);
 			break;
 	}
 
@@ -320,6 +320,9 @@ const init = () => {
 			position: absolute;
 			z-index: -1;
 			visibility: hidden;
+			width: 0;
+			height: 0;
+			overflow: hidden;
 		}
 	`;
 	document.body.append(configStyle);
