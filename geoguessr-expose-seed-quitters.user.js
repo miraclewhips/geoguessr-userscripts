@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Expose Seed Quitters
 // @description  Shows all players on the challenge results screen, even if they didn't complete all 5 rounds
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -26,7 +26,7 @@ THE_WINDOW.fetch = (function () {
 	return async function (...args) {
 		const url = args[0].toString();
 		if(url.includes(`geoguessr.com/api/v3/results/highscores/`) && url.includes(`&minRounds=5`)) {
-			args[0] = url.replace(`&minRounds=5`, `&minRounds=1`);
+			args[0] = url.replace(`&minRounds=5`, `&minRounds=1`).replace(/&limit=(\d+)/, `&limit=9999`);
 			let result = await default_fetch.apply(THE_WINDOW, args);
 			const data = await result.clone().json();
 
