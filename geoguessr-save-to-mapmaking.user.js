@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         GeoGuessr Save To Map Making App
 // @description  Save locations to Map Making App after each round
-// @version      1.6
+// @version      1.7
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=10
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=11
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @grant        GM_addStyle
