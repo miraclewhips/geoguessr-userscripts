@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Exact Map Location Count
 // @description  Shows the exact location count on the map page, rather than 50k, 100k, etc
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -17,6 +17,14 @@
 /* ############################################################################### */
 /* ##### DON'T MODIFY ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ##### */
 /* ############################################################################### */
+
+function parseVals(oldString, newVal) {
+	if(!newVal) return oldString;
+	if(!/$\d+^/.test(oldString)) return newVal.toLocaleString();
+	const oldVal = parseInt(oldString);
+	if(oldVal > newVal) return oldVal.toLocaleString();
+	return newVal.toLocaleString();
+}
 
 const init = () => {
 	const observer = new MutationObserver(async () => {
@@ -37,10 +45,10 @@ const init = () => {
 
 		const stats = document.querySelectorAll('div[class^="map-stats_mapStatMetricValue__"]');
 		if(stats.length < 4) return;
-
-		stats[1].textContent = apiData[0]?.numberOfGamesPlayed?.toLocaleString();
-		stats[2].textContent = apiData[0]?.coordinateCount?.toLocaleString();
-		stats[3].textContent = apiData[0]?.likes?.toLocaleString();
+		
+		stats[1].textContent = parseVals(stats[1].textContent, apiData[0]?.numberOfGamesPlayed);
+		stats[2].textContent = parseVals(stats[2].textContent, apiData[0]?.coordinateCount);
+		stats[3].textContent = parseVals(stats[3].textContent, apiData[0]?.likes);
 	});
 
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
