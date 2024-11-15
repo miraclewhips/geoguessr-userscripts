@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         GeoGuessr Post-War Europe Country Streak
 // @description  Adds a country streak counter that uses European country borders from the post-war era, prior to the collapse of the Soviet Union
-// @version      1.8
+// @version      1.9
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=11
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=11
-// @require      https://miraclewhips.dev/geoguessr-event-framework/utils/turf.min.js?v=11
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=12
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=12
+// @require      https://miraclewhips.dev/geoguessr-event-framework/utils/turf.min.js?v=12
 // @copyright    2023, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // @downloadURL  https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-post-war-europe-country-streak.user.js

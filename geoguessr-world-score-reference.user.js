@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         GeoGuessr World Score Reference
 // @description  See approximately what a round score would have been on a world map (while playing other maps e.g. country-specific maps)
-// @version      1.4
+// @version      1.5
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=11
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=12
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @grant        GM_addStyle
