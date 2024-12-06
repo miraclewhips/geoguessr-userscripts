@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Exact Round Time
 // @description  Allows you to change the round time limit in increments smaller than 10s
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -78,7 +78,7 @@ const init = () => {
 		}
 
 		if(timerElement && !document.getElementById('has-timer-buttons-quickplay')) {
-			let label = timerElement.querySelector('div[class^="label_label__"]');
+			let label = timerElement.querySelector('label[class^="label_label__"]');
 
 			if(label) {
 				label.id = 'has-timer-buttons-quickplay';
