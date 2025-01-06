@@ -63,158 +63,32 @@ function getGridLoc(pos) {
 }
 
 function createGrid(mapInstance) {
-	class MapGrid extends google.maps.OverlayView {
-		divs = [];
-	
-		constructor() {
-			super();
-		}
-	
-		onAdd() {
-			for(let y = 0; y < GRID_ROWS; y++) {
-				for(let x = 0; x < GRID_COLS; x++) {
-					const i = y * GRID_COLS + x;
+    const lineOptions = {
+        clickable: false,
+        map: mapInstance,
+        strokeColor: '#f00',
+        strokeOpacity: 0.5,
+        strokeWeight: 1,
+    };
 
-					let div = document.createElement('div');
-					div.style.border = '1px solid rgba(255,0,0,0.5)';
-					div.style.position = 'absolute';
-					div.style.overflow = 'hidden';
+    for(let y = 0; y < GRID_ROWS; y++) {
+        const lat = LAT_MAX_NORTH + ((LAT_MAX_SOUTH - LAT_MAX_NORTH) / GRID_ROWS * y);
+        const line = new google.maps.Polyline({
+            ...lineOptions,
+            path: [ new google.maps.LatLng(lat, LNG_MAX_EAST),
+                   new google.maps.LatLng(lat, 0),
+                   new google.maps.LatLng(lat, LNG_MAX_WEST)]
+        });
+    }
 
-					if(SHOW_LABELS) {
-						div.style.display = 'flex';
-						div.style.alignItems = 'center';
-						div.style.justifyContent = 'center';
-						div.style.color = '#000';
-						div.style.fontWeight = 'bold';
-						div.style.fontSize = '14px';
-						div.style.textShadow = 'rgb(255, 255, 255) 1px 0px 0px, rgb(255, 255, 255) 0.540302px 0.841471px 0px, rgb(255, 255, 255) -0.416147px 0.909297px 0px, rgb(255, 255, 255) -0.989992px 0.14112px 0px, rgb(255, 255, 255) -0.653644px -0.756802px 0px, rgb(255, 255, 255) 0.283662px -0.958924px 0px, rgb(255, 255, 255) 0.96017px -0.279415px 0px';
-						div.textContent = gridNumber(x, y);
-					}
-
-					this.divs[i] = div;
-			
-					const panes = this.getPanes();
-					panes.overlayLayer.appendChild(this.divs[i]);
-				}
-			}
-		}
-
-		getCoords(x, y) {
-			const overlayProjection = this.getProjection();
-
-			if(!overlayProjection) return false;
-
-			const lat = LAT_MAX_NORTH + ((LAT_MAX_SOUTH - LAT_MAX_NORTH) / GRID_ROWS * y);
-			const lng = LNG_MAX_WEST + ((LNG_MAX_EAST - LNG_MAX_WEST) / GRID_COLS * x);
-
-			return overlayProjection.fromLatLngToDivPixel(
-				new google.maps.LatLng(lat, lng)
-			);
-		}
-	
-		draw() {
-			for(let y = 0; y < GRID_ROWS; y++) {
-				for(let x = 0; x < GRID_COLS; x++) {
-					const i = y * GRID_COLS + x;
-
-					let nw = this.getCoords(x, y);
-					let se = this.getCoords(x+1, y+1);
-
-					if(!nw || !se) return;
-
-					let rect = {
-						left: nw.x,
-						top: nw.y,
-						width: se.x - nw.x,
-						height: se.y - nw.y
-					}
-					
-					if(rect.width < 0) {
-						nw = this.getCoords(x-1, y);
-						se = this.getCoords(x, y+1);
-
-						rect = {
-							left: se.x,
-							top: nw.y,
-							width: se.x - nw.x,
-							height: se.y - nw.y
-						}
-					}
-					
-					if(this.divs[i]) {
-						this.divs[i].style.left = `${rect.left}px`;
-						this.divs[i].style.top = `${rect.top}px`;
-						this.divs[i].style.width = `${rect.width}px`;
-						this.divs[i].style.height = `${rect.height}px`;
-					}
-				}
-			}
-		}
-	
-		onRemove() {
-			for(let y = 0; y < GRID_ROWS; y++) {
-				for(let x = 0; x < GRID_COLS; x++) {
-					const i = y * GRID_COLS + x;
-
-					if (this.divs[i]) {
-						this.divs[i].parentNode.removeChild(this.divs[i]);
-						delete this.divs[i];
-					}
-				}
-			}
-		}
-	
-		hide() {
-			for(let y = 0; y < GRID_ROWS; y++) {
-				for(let x = 0; x < GRID_COLS; x++) {
-					const i = y * GRID_COLS + x;
-
-					if (this.divs[i]) {
-						this.divs[i].style.visibility = "hidden";
-					}
-				}
-			}
-		}
-	
-		show() {
-			for(let y = 0; y < GRID_ROWS; y++) {
-				for(let x = 0; x < GRID_COLS; x++) {
-					const i = y * GRID_COLS + x;
-
-					if (this.divs[i]) {
-						this.divs[i].style.visibility = "visible";
-					}
-				}
-			}
-		}
-	
-		toggle() {
-			for(let y = 0; y < GRID_ROWS; y++) {
-				for(let x = 0; x < GRID_COLS; x++) {
-					const i = y * GRID_COLS + x;
-
-					if (this.divs[i]) {
-						if (this.divs[i].style.visibility === "hidden") {
-							this.show();
-						} else {
-							this.hide();
-						}
-					}
-				}
-			}
-		}
-	
-		toggleDOM(map) {
-			if (this.getMap()) {
-				this.setMap(null);
-			} else {
-				this.setMap(map);
-			}
-		}
-	}
-
-	let MWMapGrid = new MapGrid();
-	MWMapGrid.setMap(mapInstance);
+    for(let x = 0; x < GRID_COLS; x++) {
+        const lng = LNG_MAX_WEST + ((LNG_MAX_EAST - LNG_MAX_WEST) / GRID_COLS * x);
+        const line = new google.maps.Polyline({
+            ...lineOptions,
+            path: [ new google.maps.LatLng(LAT_MAX_NORTH, lng),
+                   new google.maps.LatLng(LAT_MAX_SOUTH, lng)]
+        });
+    }
 }
 
 function overrideOnLoad(googleScript, observer, overrider) {
