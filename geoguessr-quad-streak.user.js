@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Quad Streak
 // @description  Draws a grid over the minimap, and tracks how many correct quads you guess in a row
-// @version      1.16
+// @version      1.17
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -18,7 +18,6 @@
 /* ------------------------------------------------------------------------------- */
 /* ----- SETTINGS (MUST RELOAD PAGE FOR CHANGES TO TAKE EFFECT) ------------------ */
 /* ------------------------------------------------------------------------------- */
-const SHOW_LABELS = false; // show A1, A2, B1 etc on the grid
 const GRID_COLS = 20;      // number of columns in the grid
 const GRID_ROWS = 16;      // number of rows in the grid
 const LAT_MAX_NORTH = 85;  // northern-most point to draw the grid
