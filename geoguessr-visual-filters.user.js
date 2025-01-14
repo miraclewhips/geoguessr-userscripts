@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Visual Filters
 // @description  Applies visual filters to the streetview map
-// @version      1.8
+// @version      1.9
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -363,6 +363,9 @@ const init = () => {
 
 	document.addEventListener('keypress', (e) => {
 		if(e.code !== 'KeyV') return;
+		if(!document.querySelector('.widget-scene-canvas')) return;
+		if(document.activeElement.tagName === 'INPUT') return;
+
 		document.getElementById('GEO_VF_CONFIG').classList.toggle('is-hidden');
 	});
 }
