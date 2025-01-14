@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Visual Filters
 // @description  Applies visual filters to the streetview map
-// @version      1.7
+// @version      1.8
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -130,7 +130,8 @@ const filters = () => {
 		</svg>
 	`;
 
-	return `div[class^="game_canvas__"] .widget-scene-canvas {
+	return `div[class^="game_canvas__"] .widget-scene-canvas,
+		div[class^="game-panorama_panoramaCanvas__"] .widget-scene-canvas {
 		filter: ${outputFilter.length > 0 ? outputFilter.join(' ') : 'none'};
 		transform: ${outputTransform.length > 0 ? outputTransform.join(' ') : 'none'};
 	}`;
@@ -140,15 +141,16 @@ const addConfigButton = () => {
 	let panel = document.getElementById('visual-filters-button');
 	if(panel) return;
 
-	let gameScore = document.querySelector('div[class^="game_status__"] div[class^="status_section__"][data-qa="score"]');
+	let gameScore = document.querySelector('div[class^="game_status__"] div[class^="status_section__"][data-qa="score"]') || document.querySelector('div[class^="map-status_status__"] div[class^="map-status_section__"][data-qa="score"]');
 	if(!gameScore) return;
 
 	let newPanel = document.createElement('div');
 	newPanel.id = 'visual-filters-button';
 	newPanel.style.display = 'flex';
 
-	let classLabel = gameScore.querySelector('div[class^="status_label"]').className;
-	let valueLabel = gameScore.querySelector('div[class^="status_value"]').className;
+	let classLabel = gameScore.querySelector('div[class^="status_label"]')?.className || gameScore.querySelector('div[class^="map-status_label"]')?.className;
+	let valueLabel = gameScore.querySelector('div[class^="status_value"]')?.className || gameScore.querySelector('div[class^="map-status_value"]')?.className;
+	if(!classLabel || !valueLabel) return;
 
 	newPanel.innerHTML = `
 		<div class="${gameScore.getAttribute('class')}">
@@ -358,6 +360,11 @@ const init = () => {
 	});
 
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+
+	document.addEventListener('keypress', (e) => {
+		if(e.code !== 'KeyV') return;
+		document.getElementById('GEO_VF_CONFIG').classList.toggle('is-hidden');
+	});
 }
 
 init();
