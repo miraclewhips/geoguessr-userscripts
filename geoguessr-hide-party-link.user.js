@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Hide Party Link
 // @description  Blurs out the party invite link so people can't randomly join by typing the address (made for streamers)
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -20,6 +20,12 @@ let style = document.createElement('style');
 style.innerHTML = `
 	span[class^="copy-link_root__"] input {
 		filter: blur(5px);
+	}
+	div[class^="invite-modal_step__"] + div[class^="invite-modal_step__"] > div[class^="invite-modal_value__"] {
+		filter: blur(10px);
+	}
+	img[class^="invite-modal_qr__"] {
+		filter: blur(10px);
 	}
 `;
 document.body.append(style);
