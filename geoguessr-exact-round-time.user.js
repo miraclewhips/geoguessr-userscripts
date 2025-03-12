@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Exact Round Time
 // @description  Allows you to change the round time limit in increments smaller than 10s
-// @version      1.4
+// @version      1.5
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -87,7 +87,13 @@ const init = () => {
 		}
 	});
 
-	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	if(document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', () => {
+			observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+		});
+	}else{
+		observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	}
 }
 
 init();

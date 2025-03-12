@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         GeoGuessr Connect 4 Map Grid
 // @description  Shows a grid overlay on the minimap and counts the streaks
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=12
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=12
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=13
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=13
 // @copyright    2024, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // ==/UserScript==

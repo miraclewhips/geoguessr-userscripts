@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         GeoGuessr Save To Map Making App
 // @description  Save locations to Map Making App after each round
-// @version      1.8
+// @version      1.9
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=12
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=13
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @grant        GM_addStyle
@@ -504,7 +504,13 @@ const observer = new MutationObserver(() => {
 	}
 });
 
-observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+if(document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', () => {
+		observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	});
+}else{
+	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+}
 
 GeoGuessrEventFramework.init().then(GEF => {
 	console.log('GeoGuessr Save To Map Making App initialised.');

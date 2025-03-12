@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Team Duels Bot Instaguess
 // @description  Use in conjunction with a bot account to instaguess on Antarctica (or guess after a specified delay) on team duels
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -66,7 +66,13 @@ const init = () => {
 		}
 	});
 
-	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	if(document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', () => {
+			observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+		});
+	}else{
+		observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	}
 }
 
 init();

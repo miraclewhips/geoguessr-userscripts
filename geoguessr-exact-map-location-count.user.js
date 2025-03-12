@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Exact Map Location Count
 // @description  Shows the exact location count on the map page, rather than 50k, 100k, etc
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -51,7 +51,13 @@ const init = () => {
 		stats[3].textContent = parseVals(stats[3].textContent, apiData[0]?.likes);
 	});
 
-	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	if(document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', () => {
+			observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+		});
+	}else{
+		observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	}
 }
 
 init();

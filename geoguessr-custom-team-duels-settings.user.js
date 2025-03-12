@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Custom Team Duels Settings
 // @description  Allows you to enter a custom value for certain team duels settings
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -68,7 +68,13 @@ const init = () => {
 		}
 	});
 
-	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	if(document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', () => {
+			observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+		});
+	}else{
+		observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	}
 }
 
 init();

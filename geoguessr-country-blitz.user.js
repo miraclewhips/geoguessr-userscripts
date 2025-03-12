@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Country Blitz
 // @description  Get as many countries/states correct as you can within the time limit
-// @version      1.5
+// @version      1.6
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -704,7 +704,14 @@ const init = () => {
 		}
 	});
 
-	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	if(document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', () => {
+			observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+		});
+	}else{
+		observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	}
+
 	tick();
 }
 

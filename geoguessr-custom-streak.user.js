@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         GeoGuessr Custom Streaks
 // @description  Streak script that allows you to use GeoJSON data for streaks
-// @version      1.11
+// @version      1.12
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=12
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=12
-// @require      https://miraclewhips.dev/geoguessr-event-framework/utils/turf.min.js?v=12
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=13
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-streak-framework.min.js?v=13
+// @require      https://miraclewhips.dev/geoguessr-event-framework/utils/turf.min.js?v=13
 // @copyright    2022, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
 // @downloadURL  https://github.com/miraclewhips/geoguessr-userscripts/raw/master/geoguessr-custom-streak.user.js

@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.14
+// @version      1.15
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
-// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=12
+// @require      https://miraclewhips.dev/geoguessr-event-framework/geoguessr-event-framework.min.js?v=13
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
 // @grant        unsafeWindow
 // @grant        GM_addStyle
@@ -842,7 +842,13 @@ const observer = new MutationObserver(() => {
 	}
 });
 
-observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+if(document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', () => {
+		observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	});
+}else{
+	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+}
 
 let MWGTM_SV, MWGTM_M, MWGTM_SVC;
 

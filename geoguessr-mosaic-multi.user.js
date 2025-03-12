@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Mosaic Multi
 // @description  Divide the round up into tiles and reveal them one-by-one and score bonus points for using fewer tiles (made for NMPZ)
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -511,7 +511,13 @@ const init = () => {
 		}
 	});
 
-	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	if(document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', () => {
+			observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+		});
+	}else{
+		observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	}
 }
 
 init();

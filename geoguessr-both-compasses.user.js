@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Both Compasses
 // @description  Shows both compasses (classic compass must be disabled in GeoGuessr settings)
-// @version      1.1
+// @version      1.2
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -81,7 +81,13 @@ const observer = new MutationObserver(() => {
 	}
 });
 
-observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+if(document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', () => {
+		observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+	});
+}else{
+	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
+}
 
 // Script injection, extracted from unityscript extracted from extenssr:
 // https://gitlab.com/nonreviad/extenssr/-/blob/main/src/injected_scripts/maps_api_injecter.ts
