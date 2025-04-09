@@ -5,7 +5,6 @@
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
-// @grant        unsafeWindow
 // @grant        GM_addStyle
 // @copyright    2025, miraclewhips (https://github.com/miraclewhips)
 // @license      MIT
