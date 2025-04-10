@@ -36,6 +36,10 @@ GM_addStyle(`
 	}
 
 	div[class^="map-pin_mapPin__"] div[class^="styles_content__"] {
-		background: var(--border-color);
+		background: var(--border-color) !important;
+	}
+
+	div[class^="map-pin_mapPin__"] div[class^="styles_annotation__"] div[class^="styles_content__"] {
+		background: var(--background) !important;
 	}
 `);
