@@ -360,7 +360,7 @@ function loadState() {
 	if(!data) return;
 	
 	let dataJson = JSON.parse(data);
-	if(!data) return;
+	if(!dataJson) return;
 
 	Object.assign(MWGTM_STATE, defaultState(), dataJson);
 	saveState();
