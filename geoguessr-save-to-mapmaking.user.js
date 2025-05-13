@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Save To Map Making App
 // @description  Save locations to Map Making App after each round
-// @version      1.9
+// @version      1.10
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -213,7 +213,7 @@ function loadState() {
 	if(!data) return;
 	
 	const dataJson = JSON.parse(data);
-	if(!data) return;
+	if(!dataJson) return;
 
 	Object.assign(MWSTMM_STATE, defaultState(), dataJson);
 	saveState();

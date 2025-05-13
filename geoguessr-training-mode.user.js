@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.15
+// @version      1.16
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -360,7 +360,7 @@ function loadState() {
 	if(!data) return;
 	
 	let dataJson = JSON.parse(data);
-	if(!data) return;
+	if(!dataJson) return;
 
 	Object.assign(MWGTM_STATE, defaultState(), dataJson);
 	saveState();
