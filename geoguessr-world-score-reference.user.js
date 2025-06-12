@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr World Score Reference
 // @description  See approximately what a round score would have been on a world map (while playing other maps e.g. country-specific maps)
-// @version      1.6
+// @version      1.7
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start

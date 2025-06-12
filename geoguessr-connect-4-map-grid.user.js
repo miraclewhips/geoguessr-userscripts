@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Connect 4 Map Grid
 // @description  Shows a grid overlay on the minimap and counts the streaks
-// @version      1.4
+// @version      1.5
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com

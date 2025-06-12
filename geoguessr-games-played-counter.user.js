@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Games Played Counter
 // @description  Shows how many games you have played and allows you to set a counter (click counter on the game screen to configure)
-// @version      1.5
+// @version      1.6
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com

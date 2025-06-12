@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr County Streak
 // @description  Adds a county streak counter that automatically updates while you play (may not work for all countries, depending on how they define their counties)
-// @version      1.16
+// @version      1.17
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com

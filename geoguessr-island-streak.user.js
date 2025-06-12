@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Island Streak
 // @description  Adds an island streak counter for certain countries (New Zealand, Indonesia, Japan, Philippines, Greece)
-// @version      1.19
+// @version      1.20
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com

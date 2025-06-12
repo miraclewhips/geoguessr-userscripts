@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Custom Streaks
 // @description  Streak script that allows you to use GeoJSON data for streaks
-// @version      1.12
+// @version      1.13
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com

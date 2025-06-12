@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Save To Map Making App
 // @description  Save locations to Map Making App after each round
-// @version      1.10
+// @version      1.11
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
