@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Training Mode
 // @description  Save locations to Map Making App, toggle compass, terrain mode, hide car, and more.
-// @version      1.17
+// @version      1.18
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -575,8 +575,10 @@ function toggleCoverage(enabled) {
 	if(MWGTM_SVC && MWGTM_M) {
 		if(enabled) {
 			MWGTM_M.overlayMapTypes.insertAt(0, MWGTM_SVC);
+			MWGTM_M.overlayMapTypes.insertAt(1, MWGTM_LABELS);
 		}else{
 			MWGTM_M.overlayMapTypes.removeAt(0);
+			MWGTM_M.overlayMapTypes.removeAt(1);
 		}
 	}
 	
@@ -850,7 +852,7 @@ if(document.readyState === 'loading') {
 	observer.observe(document.querySelector('#__next'), { subtree: true, childList: true });
 }
 
-let MWGTM_SV, MWGTM_M, MWGTM_SVC;
+let MWGTM_SV, MWGTM_M, MWGTM_SVC, MWGTM_LABELS;
 
 // Script injection, extracted from unityscript extracted from extenssr:
 // https://gitlab.com/nonreviad/extenssr/-/blob/main/src/injected_scripts/maps_api_injecter.ts
@@ -917,6 +919,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
 					maxZoom: 9,
 					minZoom: 0,
 				});
+
+				MWGTM_LABELS =  new google.maps.StyledMapType([
+					{featureType: 'all', stylers: [{visibility: 'off'}]},
+					{featureType: 'all', elementType: 'labels', stylers: [{visibility: 'on'}]},
+				], {name: 'labels'});;
 
 				toggleCoverage(MWGTM_STATE.coverageEnabled);
 
