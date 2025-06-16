@@ -577,8 +577,8 @@ function toggleCoverage(enabled) {
 			MWGTM_M.overlayMapTypes.insertAt(0, MWGTM_SVC);
 			MWGTM_M.overlayMapTypes.insertAt(1, MWGTM_LABELS);
 		}else{
-			MWGTM_M.overlayMapTypes.removeAt(0);
 			MWGTM_M.overlayMapTypes.removeAt(1);
+			MWGTM_M.overlayMapTypes.removeAt(0);
 		}
 	}
 	
