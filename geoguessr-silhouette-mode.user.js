@@ -24,20 +24,6 @@ const THRESHOLD = 0.075; // usually something between 0 and 0.2 works best
 const vertexOld = "const float f=3.1415926;varying vec3 a;uniform vec4 b;attribute vec3 c;attribute vec2 d;uniform mat4 e;void main(){vec4 g=vec4(c,1);gl_Position=e*g;a=vec3(d.xy*b.xy+b.zw,1);a*=length(c);}";
 const fragOld = "precision highp float;const float h=3.1415926;varying vec3 a;uniform vec4 b;uniform float f;uniform sampler2D g;void main(){vec4 i=vec4(texture2DProj(g,a).rgb,f);gl_FragColor=i;}";
 
-// const vertexNew = `
-// varying vec3 a;
-// uniform vec4 b;
-// attribute vec3 c;
-// attribute vec2 d;
-// uniform mat4 e;
-//  
-// void main(){
-//     vec4 g = vec4(c, 1);
-//     gl_Position = e * g;
-//     a = vec3(d.xy * b.xy + b.zw, 1.0);
-//     a *= length(c);
-// }`;
-
 const fragNew = `
 precision highp float;
 varying vec3 a;
@@ -58,10 +44,7 @@ function installShaderSource(ctx) {
 
 	function shaderSource() {
 		if(typeof arguments[1] === 'string') {
-			/*if(arguments[1] === vertexOld) {
-				const s = vertexNew;
-				if(s) arguments[1] = s;
-			}else */if (arguments[1] === fragOld) {
+			if (arguments[1] === fragOld) {
 				const s = fragNew;
 				if(s) arguments[1] = s;
 			}
