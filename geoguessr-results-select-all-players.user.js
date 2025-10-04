@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Results Select All Players
 // @description  Selects all players on the results screen
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -36,11 +36,12 @@ function select(enable) {
 	const table = document.getElementById('mwrsap');
 	if(!table) return;
 
-	const rows = table.querySelectorAll('div[class^="results_row__"]');
+	const rows = table.querySelectorAll('div[class^="coordinate-results_row__"],'
+										+'div[class*="draggable-coordinate-results_leftCol"] > div[class^="draggable-coordinate-results_rowItem__"]');
 	if(rows.length <= 1) return;
 
 	for(let i = 1; i < rows.length; i++) {
-		if(rows[i].className.includes('results_selected__') === enable) continue;
+		if(rows[i].className.includes('coordinate-results_selected__') === enable) continue;
 		rows[i].click();
 	}
 }
@@ -58,12 +59,14 @@ function init() {
 		const path = window.location.pathname;
 		if(!path.includes('/results/')) return;
 
-		const table = document.querySelector('div[class^="results_table__"]');
+		const table = document.querySelector('div[class^="coordinate-results_table__"],'
+											 +'div[class^="draggable-coordinate-results_table__"]');
 		if(!table || table.id === 'mwrsap') return;
 
 		table.id = 'mwrsap';
 
-		const cell = table.querySelector('div[class*="results_headerRow__"] > div:first-child');
+		const cell = table.querySelector('div[class*="coordinate-results_headerRow"] > div:first-child,'
+										 + 'div[class*="draggable-coordinate-results_leftCol"] > div:first-child');
 		if(!cell) return;
 
 		const btnAll = document.createElement('div');
