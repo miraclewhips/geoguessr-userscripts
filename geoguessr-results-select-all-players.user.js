@@ -36,7 +36,7 @@ function select(enable) {
 	const table = document.getElementById('mwrsap');
 	if(!table) return;
 
-	const rows = table.querySelectorAll('div[class^="results_row__"]');
+	const rows = table.querySelectorAll('div[class^="coordinate-results_row__"]');
 	if(rows.length <= 1) return;
 
 	for(let i = 1; i < rows.length; i++) {
@@ -58,12 +58,12 @@ function init() {
 		const path = window.location.pathname;
 		if(!path.includes('/results/')) return;
 
-		const table = document.querySelector('div[class^="results_table__"]');
+		const table = document.querySelector('div[class^="coordinate-results_table__"]');
 		if(!table || table.id === 'mwrsap') return;
 
 		table.id = 'mwrsap';
 
-		const cell = table.querySelector('div[class*="results_headerRow__"] > div:first-child');
+		const cell = table.querySelector('div[class*="coordinate-results_headerRow__"] > div:first-child');
 		if(!cell) return;
 
 		const btnAll = document.createElement('div');
