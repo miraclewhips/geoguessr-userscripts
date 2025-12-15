@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Results Select All Players
 // @description  Selects all players on the results screen
-// @version      1.3
+// @version      1.4
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -38,9 +38,9 @@ function select(enable) {
 
 	const rows = table.querySelectorAll('div[class^="coordinate-results_row__"],'
 										+'div[class*="draggable-coordinate-results_leftCol"] > div[class^="draggable-coordinate-results_rowItem__"]');
-	if(rows.length <= 1) return;
+	if(rows.length === 0) return;
 
-	for(let i = 1; i < rows.length; i++) {
+	for(let i = 0; i < rows.length; i++) {
 		if(rows[i].className.includes('coordinate-results_selected__') === enable) continue;
 		rows[i].click();
 	}
@@ -69,17 +69,21 @@ function init() {
 										 + 'div[class*="draggable-coordinate-results_leftCol"] > div:first-child');
 		if(!cell) return;
 
+		const btnOuter = document.createElement('div');
+
 		const btnAll = document.createElement('div');
 		btnAll.className = 'mwrsap-button';
 		btnAll.textContent = 'SELECT ALL';
 		btnAll.addEventListener('click', selectAll);
-		cell.appendChild(btnAll);
+		btnOuter.appendChild(btnAll);
 
 		const btnNone = document.createElement('div');
 		btnNone.className = 'mwrsap-button';
 		btnNone.textContent = 'DESELECT ALL';
 		btnNone.addEventListener('click', selectNone);
-		cell.appendChild(btnNone);
+		btnOuter.appendChild(btnNone);
+
+		cell.appendChild(btnOuter);
 	});
 
 	if(document.readyState === 'loading') {
