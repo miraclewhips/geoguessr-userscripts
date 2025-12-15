@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 GM_addStyle(`
-	div[class^="results_table__"] div[class^="results_row__"] div[class^="results_column__"]:last-of-type {
+	div[class^="coordinate-results_table__"] div[class^="coordinate-results_row__"] div[class^="coordinate-results_column__"]:last-of-type {
 		grid-column-start: 7;
 	}
 `);
@@ -25,8 +25,8 @@ const default_fetch = THE_WINDOW.fetch;
 THE_WINDOW.fetch = (function () {
 	return async function (...args) {
 		const url = args[0].toString();
-		if(url.includes(`geoguessr.com/api/v3/results/highscores/`) && url.includes(`&minRounds=5`)) {
-			args[0] = url.replace(`&minRounds=5`, `&minRounds=1`).replace(/&limit=(\d+)/, `&limit=9999`);
+		if(url.includes(`geoguessr.com/api/v3/results/highscores/`) && url.includes(`&minRounds=`) && !url.endsWith(`&minRounds=1`)) {
+			args[0] = url.replace(/&minRounds=(\d+)/, `&minRounds=1`).replace(/&limit=(\d+)/, `&limit=9999`);
 			let result = await default_fetch.apply(THE_WINDOW, args);
 			const data = await result.clone().json();
 
