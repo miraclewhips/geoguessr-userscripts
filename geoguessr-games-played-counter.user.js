@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Games Played Counter
 // @description  Shows how many games you have played and allows you to set a counter (click counter on the game screen to configure)
-// @version      1.8
+// @version      1.9
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -167,7 +167,7 @@ function updateSummaryPanel() {
 
 	const scoreLayoutBottom = document.querySelector('div[class^="result-layout_root"] div[class^="result-layout_bottomNew__"]');
 	if(scoreLayoutBottom) {
-		scoreLayoutBottom.style.flex = '0';
+		scoreLayoutBottom.style.flex = '0 0 auto';
 		scoreLayoutBottom.style.maxHeight = 'none';
 	}
 
