@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Exact Round Time
 // @description  Allows you to change the round time limit in increments smaller than 10s
-// @version      1.5
+// @version      1.6
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?domain=geoguessr.com
@@ -24,17 +24,27 @@ const createButton = (text) => {
 }
 
 const adjustTime = (t) => {
+	if(isNaN(t) || t < 0) {
+		window.alert('Invalid time entered');
+		return;
+	}
 	let currentSettings = JSON.parse(localStorage.getItem('game-settings')) ?? {};
-	currentSettings.timeLimit = Math.max(0, currentSettings.timeLimit + t);
+	currentSettings.timeLimit = Math.max(0, t);
 	localStorage.setItem('game-settings', JSON.stringify(currentSettings));
 	window.dispatchEvent(new Event('storage'));
+	window.location.reload();
 }
 
 const adjustTimeQuickplay = (t) => {
+	if(isNaN(t) || t < 0) {
+		window.alert('Invalid time entered');
+		return;
+	}
 	let seconds = parseInt(localStorage.getItem('quickplay-time')) ?? 0;
-	seconds = Math.max(0, seconds + t);
+	seconds = Math.max(0, t);
 	localStorage.setItem('quickplay-time', seconds);
 	window.dispatchEvent(new Event('storage'));
+	window.location.reload();
 }
 
 const addButtons = (label, adjustFn) => {
@@ -46,21 +56,15 @@ const addButtons = (label, adjustFn) => {
 	labelText.textContent = 'Round time';
 	labelText.style.margin = '0 10px';
 
-	let buttonMinus = createButton('-');
-	let buttonPlus = createButton('+');
+	let buttonEdit = createButton('EDIT');
 
-	buttonMinus.onclick = () => {
-		adjustFn(-1);
-	}
-
-	buttonPlus.onclick = () => {
-		adjustFn(1);
+	buttonEdit.onclick = () => {
+		adjustFn(parseInt(window.prompt('Number of seconds:')));
 	}
 
 	label.innerHTML = '';
-	label.append(buttonMinus);
 	label.append(labelText);
-	label.append(buttonPlus);
+	label.append(buttonEdit);
 }
 
 const init = () => {
