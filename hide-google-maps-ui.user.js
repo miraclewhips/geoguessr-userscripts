@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hide Google Maps UI
 // @description  Press 'H' to toggle Google Maps UI elements
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.google.com/maps/*
 // @grant        GM_addStyle
@@ -13,7 +13,7 @@
 // @updateURL    https://github.com/miraclewhips/geoguessr-userscripts/raw/master/hide-google-maps-ui.user.js
 // ==/UserScript==
 
-GM_addStyle (`body.ui-is-hidden #scene {z-index: 99999} body.ui-is-hidden #watermark {display:none}`);
+GM_addStyle (`body.ui-is-hidden div:has( > div[role="application"]) {z-index: 99999} body.ui-is-hidden img[src*="mapslogo"] {display:none !important}`);
 window.addEventListener('keypress', (e) => {
     if(e.key !== 'h' || document.activeElement.tagName === 'INPUT') return;
     document.body.classList.toggle('ui-is-hidden');
