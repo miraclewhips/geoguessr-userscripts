@@ -21,20 +21,21 @@ if(window.frameElement) return;
 
 let DEFAULT_MAP_TYPE, CUSTOM_MAP_TYPE;
 let MAP_INSTANCES = [];
-let MAP_SHOWN = true;
+let CUSTOM_MAP_ENABLED = false;
 
 function updateMapType() {
 	for(const map of MAP_INSTANCES) {
-		map.setMapTypeId(MAP_SHOWN ? DEFAULT_MAP_TYPE : CUSTOM_MAP_TYPE);
+		map.setMapTypeId(CUSTOM_MAP_ENABLED ? CUSTOM_MAP_TYPE : DEFAULT_MAP_TYPE);
 	}
 }
 
 const observer = new MutationObserver(() => {
 	const singlePlayer = document.querySelector(`div[class^="game_guessMap__"]`);
+	const resultsLayout = document.querySelector(`div[class^="result-layout_root__"]`);
 	const partyDuels = document.querySelector(`div[class^="guess-map_guessMap__"]`);
-	const prev = MAP_SHOWN;
-	MAP_SHOWN = !(singlePlayer || partyDuels);
-	if(MAP_SHOWN !== prev) updateMapType();
+	const prev = CUSTOM_MAP_ENABLED;
+	CUSTOM_MAP_ENABLED = (singlePlayer && !resultsLayout) || partyDuels;
+	if(CUSTOM_MAP_ENABLED !== prev) updateMapType();
 });
 
 if(document.readyState === 'loading') {
