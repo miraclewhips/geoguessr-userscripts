@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Expose Seed Quitters
 // @description  Shows all players on the challenge results screen, even if they didn't complete all 5 rounds
-// @version      1.2
+// @version      1.3
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -37,6 +37,7 @@ THE_WINDOW.fetch = (function () {
 			});
 
 			result.json = () => data;
+			result.text = () => JSON.stringify(data);
 			return result;
 		}
 
