@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr No-Car Switcher
 // @description  Switch between different car mask shapes without reloading. Does not work on Chrome, tested in Firefox and Edge.
-// @version      1.0
+// @version      1.1
 // @author       miraclewhips
 // @match        *://*.geoguessr.com/*
 // @run-at       document-start
@@ -82,7 +82,7 @@ uniform sampler2D g;
 uniform int carMaskIndex;
 
 const float h = 3.1415926;
-const vec3 maskColor = vec3(${MASK_COLOR_NORMALIZED.r}, ${MASK_COLOR_NORMALIZED.g}, ${MASK_COLOR_NORMALIZED.b});
+vec3 maskColor = vec3(${MASK_COLOR_NORMALIZED.r}, ${MASK_COLOR_NORMALIZED.g}, ${MASK_COLOR_NORMALIZED.b});
 
 bool maskClassic(vec2 aD) {
 	float thetaD = aD.y;
@@ -182,6 +182,14 @@ bool maskCombined(vec2 aD) {
 	// ignore checking maskSlim() and maskClassic() as the others cover it completely
 	return maskTruck(aD, true) || maskSmallcam(aD, true);
 }
+
+bool maskCarDirection(vec2 aD) {
+	float x = aD.x;
+	float y = abs(4.0*x - 2.0);
+	y = y > 1.0 ? 2.0 - y : y;
+	y = y > 0.999 ? 1.0 : (y < 0.001 ? 0.0 :sqrt(y));
+	return aD.y > 0.998 - (0.05 * (1.0 - y));
+}
  
 void main() {
     vec2 aD = potato.xy / a.z;
@@ -194,6 +202,8 @@ void main() {
 	if(carMaskIndex == 5) hidden = maskTruck(aD, true);
 	if(carMaskIndex == 6) hidden = maskSmallcam(aD, false);
 	if(carMaskIndex == 7) hidden = maskSmallcam(aD, true);
+
+	if(hidden && maskCarDirection(aD)) maskColor += vec3(0.05);
 
 	// vec3 maskColorDebug = texture2DProj(g, a).rgb * vec3(1.0, 0.5, 0.5);
 
